@@ -1,0 +1,21 @@
+{
+  "name": "অভিষেক আচার্য — Kaarigar Training",
+  "short_name": "Abhishek",
+  "description": "NSDC Vegetable Grower (AGR/Q0405) training toolkit",
+  "start_url": "/learn",
+  "display": "standalone",
+  "background_color": "#FDFAF6",
+  "theme_color": "#2E5339",
+  "icons": [
+    {
+      "src": "/brand/abhishek.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/abhishek.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}
