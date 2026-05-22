@@ -8,6 +8,14 @@ export const preferredRegion = "bom1";
 
 const LIVE_MODEL = process.env.GEMINI_LIVE_MODEL || "gemini-3.1-flash-live-preview";
 
+function geminiApiKey(): string {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
+    ""
+  ).trim();
+}
+
 function modeInstruction(mode: string, moduleId: string | null, lang: string, brandName: string) {
   const langLine = lang === "bn"
     ? "Speak Bengali when the learner speaks Bengali, using Bengali script for transcriptions."
@@ -57,9 +65,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid lang" }, { status: 400 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = geminiApiKey();
   if (!apiKey) {
-    return NextResponse.json({ error: "Gemini Live is not configured" }, { status: 500 });
+    return NextResponse.json({ error: "Live voice is temporarily unavailable" }, { status: 503 });
   }
 
   const systemInstruction = `${acharya.prompt.systemPrompt}\n\n${modeInstruction(mode, moduleId, lang, acharya.brand.name)}`;
@@ -108,18 +116,14 @@ export async function POST(req: NextRequest) {
       token = {};
     }
     if (!tokenRes.ok || !token.name) {
-      console.error("gemini live token error - FULL RESPONSE:", {
+      console.error("gemini live token error:", {
         status: tokenRes.status,
         statusText: tokenRes.statusText,
         model: LIVE_MODEL,
-        body: rawTokenBody,
-        requestBody: tokenRequest,
+        body: rawTokenBody.slice(0, 500),
       });
       return NextResponse.json(
-        {
-          error: "Could not create Gemini Live token",
-          detail: process.env.NODE_ENV === "development" ? rawTokenBody : undefined,
-        },
+        { error: "Live voice is temporarily unavailable" },
         { status: 502 },
       );
     }

@@ -6,6 +6,18 @@ import { resolveModuleId, tableFor } from "@/lib/server/acharya-data";
 export const runtime = "nodejs";
 export const preferredRegion = "bom1";
 
+function hasMeaningfulInput(input: string, hasPhoto: boolean): boolean {
+  const text = input.replace(/\s+/g, " ").trim();
+  if (hasPhoto && text.length === 0) return true;
+  if (text.length < 24) return false;
+  if (/^(hi|hello|hey|test|testing|asdf|random|nothing|na|n\/a|ok|okay|yes|no)$/i.test(text)) {
+    return false;
+  }
+  if (/^(.)\1{5,}$/i.test(text.replace(/\s/g, ""))) return false;
+  const tokens = text.match(/[A-Za-z0-9\u0900-\u097F\u0980-\u09FF]+/g) || [];
+  return tokens.length >= 4;
+}
+
 export async function POST(req: NextRequest) {
   if (!dbConfigured) return NextResponse.json({ ok: true });
 
@@ -40,6 +52,9 @@ export async function POST(req: NextRequest) {
   }
   if (typeof nextStep !== "string" || nextStep.length > 1000) {
     return NextResponse.json({ error: "Invalid nextStep" }, { status: 400 });
+  }
+  if (!hasMeaningfulInput(input, !!hasPhoto) && score > 1) {
+    return NextResponse.json({ error: "Invalid self-assessment input" }, { status: 400 });
   }
 
   const slug = getAcharyaSlugFromRequest(req);

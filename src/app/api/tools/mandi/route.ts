@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       source: "manual",
       records: [],
-      note: "Add DATA_GOV_API_KEY to .env.local for live Agmarknet/data.gov.in mandi prices.",
+      note: "Live mandi prices are temporarily unavailable. Use this as a price-check reminder and try again later.",
       query: { commodity, state },
     });
   }
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       source: "error",
       records: [],
-      note: "Could not load mandi prices right now. Check DATA_GOV_API_KEY and data.gov.in availability.",
+      note: "Could not load mandi prices right now. Try again later or verify prices with your local market.",
     });
   }
 }

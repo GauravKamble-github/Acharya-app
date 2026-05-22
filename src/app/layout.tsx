@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
+import Script from "next/script";
 import "./globals.css";
 import PhoneGate from "@/components/PhoneGate";
 import { getAcharyaContextBySlug } from "@/lib/server/acharya-context";
@@ -16,7 +17,7 @@ async function activeSlug(): Promise<AcharyaSlug> {
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getAcharyaContextBySlug(await activeSlug());
   return {
-    title: ctx.brand.name,
+    title: "Acharya app",
     description: ctx.brand.description,
     manifest: "/manifest.json",
     robots: { index: false, follow: false },
@@ -43,6 +44,33 @@ export default function RootLayout({
       className="h-full"
       suppressHydrationWarning
     >
+      <head>
+        <Script id="strip-extension-hydration-attrs" strategy="beforeInteractive">
+          {`
+            (function () {
+              var attrs = ["cz-shortcut-listen"];
+              function clean() {
+                var targets = [document.documentElement, document.body].filter(Boolean);
+                for (var i = 0; i < targets.length; i++) {
+                  for (var j = 0; j < attrs.length; j++) {
+                    targets[i].removeAttribute(attrs[j]);
+                  }
+                }
+              }
+              clean();
+              function observe() {
+                clean();
+                if (!document.body || !window.MutationObserver) return;
+                var observer = new MutationObserver(clean);
+                observer.observe(document.body, { attributes: true, attributeFilter: attrs });
+                setTimeout(function () { observer.disconnect(); }, 5000);
+              }
+              if (document.body) observe();
+              else document.addEventListener("DOMContentLoaded", observe, { once: true });
+            })();
+          `}
+        </Script>
+      </head>
       <body className="h-full bg-paper text-ink font-sans" suppressHydrationWarning>
         <PhoneGate>{children}</PhoneGate>
       </body>

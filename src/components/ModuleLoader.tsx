@@ -1,31 +1,39 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { api } from '@/lib/api-client';
+import { api, currentAcharyaSlug } from '@/lib/api-client';
 
 /**
  * Loads module list into zustand store on first mount via
  * GET /api/content/modules. No direct Supabase in the client bundle.
  */
 export default function ModuleLoader() {
-  const { modules, setModules } = useStore();
-  const attempted = useRef(false);
+  const pathname = usePathname();
+  const { setModules, setAcharyaContext } = useStore();
+  const loadSeq = useRef(0);
 
   useEffect(() => {
-    if (modules.length > 0) return;
-    if (attempted.current) return;
-    attempted.current = true;
+    const slug = currentAcharyaSlug();
+    const seq = ++loadSeq.current;
+    let cancelled = false;
+
+    setAcharyaContext(slug);
 
     api.content.modules()
       .then((mods) => {
-        if (mods && mods.length > 0) setModules(mods);
+        if (!cancelled && seq === loadSeq.current) setModules(mods || []);
       })
       .catch((err) => {
         console.error('Failed to load modules:', err);
-        attempted.current = false; // allow retry on next render
+        if (!cancelled && seq === loadSeq.current) setModules([]);
       });
-  }, [modules.length, setModules]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname, setAcharyaContext, setModules]);
 
   return null;
 }

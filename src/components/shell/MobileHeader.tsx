@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
 import { Tag } from "@/components/ui/Tag";
@@ -11,6 +10,7 @@ import AcharyaSwitcher from "./AcharyaSwitcher";
 import { useStore } from "@/lib/store";
 import { t } from "@/lib/i18n/labels";
 import { activeTabKey, visibleTabs } from "./tabs";
+import { useShellNavigation } from "./ShellNavigation";
 import { ModuleSelector, LangSelector } from "./Selectors";
 import { acharyaRoute, adminRoute, currentAcharyaBrand, stripAcharyaPrefix } from "@/lib/acharya-client";
 
@@ -21,16 +21,16 @@ interface Props {
 const HINT_KEY = "arjun-menu-hint-seen";
 
 export default function MobileHeader({ className = "" }: Props) {
-  const pathname = usePathname();
+  const { activePath, navigateInShell } = useShellNavigation();
   const { lang, voiceEnabled, toggleVoice } = useStore();
   const brand = currentAcharyaBrand();
-  const cleanPath = stripAcharyaPrefix(pathname);
+  const cleanPath = stripAcharyaPrefix(activePath);
   const [open, setOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     setOpen(false);
-  }, [pathname]);
+  }, [activePath]);
 
   useEffect(() => {
     if (!open) return;
@@ -95,7 +95,7 @@ export default function MobileHeader({ className = "" }: Props) {
 
   if (cleanPath.startsWith("/admin")) return null;
 
-  const active = activeTabKey(pathname);
+  const active = activeTabKey(activePath);
   const tabs = visibleTabs();
   const activeTab = tabs.find((tt) => tt.key === active);
   const currentLabel = activeTab ? t(activeTab.labelKey, lang) : "";
@@ -200,10 +200,13 @@ export default function MobileHeader({ className = "" }: Props) {
                     const isActive = tab.key === active;
                     return (
                       <li key={tab.key}>
-                        <Link
-                          href={acharyaRoute(tab.primary)}
-                          onClick={() => setOpen(false)}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigateInShell(tab.primary);
+                            setOpen(false);
+                          }}
+                          className={`flex w-full items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                             isActive
                               ? "bg-forest text-cream"
                               : "text-ink hover:bg-cream"
@@ -215,7 +218,7 @@ export default function MobileHeader({ className = "" }: Props) {
                             {t(tab.labelKey, lang)}
                           </span>
                           {isActive && <Icon name="check" size={14} strokeWidth={2.5} />}
-                        </Link>
+                        </button>
                       </li>
                     );
                   })}

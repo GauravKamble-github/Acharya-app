@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -9,6 +8,7 @@ import AcharyaSwitcher from "./AcharyaSwitcher";
 import { useStore } from "@/lib/store";
 import { t } from "@/lib/i18n/labels";
 import { activeTabKey, visibleTabs } from "./tabs";
+import { useShellNavigation } from "./ShellNavigation";
 import { ModuleSelector, LangSelector } from "./Selectors";
 import { acharyaRoute, currentAcharyaBrand, stripAcharyaPrefix } from "@/lib/acharya-client";
 
@@ -17,14 +17,14 @@ interface Props {
 }
 
 export default function TopNavBar({ className = "" }: Props) {
-  const pathname = usePathname();
+  const { activePath, navigateInShell } = useShellNavigation();
   const { lang } = useStore();
   const brand = currentAcharyaBrand();
-  const cleanPath = stripAcharyaPrefix(pathname);
+  const cleanPath = stripAcharyaPrefix(activePath);
 
   if (cleanPath.startsWith("/admin")) return null;
 
-  const active = activeTabKey(pathname);
+  const active = activeTabKey(activePath);
 
   return (
     <header
@@ -59,8 +59,9 @@ export default function TopNavBar({ className = "" }: Props) {
                 const isActive = tab.key === active;
                 return (
                   <li key={tab.key} className="shrink-0">
-                    <Link
-                      href={acharyaRoute(tab.primary)}
+                    <button
+                      type="button"
+                      onClick={() => navigateInShell(tab.primary)}
                       className={`flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1.5 rounded-full text-[12px] lg:text-[13px] font-medium transition-colors whitespace-nowrap ${
                         isActive
                           ? "bg-forest text-cream"
@@ -71,7 +72,7 @@ export default function TopNavBar({ className = "" }: Props) {
                     >
                       <Icon name={tab.icon} size={14} strokeWidth={isActive ? 2 : 1.75} />
                       <span className="hidden lg:inline">{t(tab.labelKey, lang)}</span>
-                    </Link>
+                    </button>
                   </li>
                 );
               })}

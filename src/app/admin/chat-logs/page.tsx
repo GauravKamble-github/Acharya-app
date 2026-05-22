@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { adminRoute } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
@@ -44,6 +45,7 @@ function langLabel(l: string | null): string {
 function ChatLogsInner() {
   const router = useRouter();
   const params = useSearchParams();
+  const { activeSlug } = useAdminAcharya();
   const learnerIdFilter = params.get('learnerId') || '';
   const moduleIdFilter = params.get('moduleId') || '';
 
@@ -59,20 +61,28 @@ function ChatLogsInner() {
   const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     api.admin.chatConversations({
       page,
       learnerId: learnerIdFilter || undefined,
       moduleId: moduleIdFilter || undefined,
+      acharyaSlug: activeSlug,
     })
       .then((r) => {
+        if (cancelled) return;
         setRows(r.rows);
         setTotalCount(r.totalCount);
         setPageSize(r.pageSize);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page, learnerIdFilter, moduleIdFilter]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, learnerIdFilter, moduleIdFilter, activeSlug]);
 
   async function openConversation(c: Conversation) {
     setActive(c);
@@ -84,6 +94,7 @@ function ChatLogsInner() {
         learnerId: c.learnerId,
         moduleId: c.moduleId ?? undefined,
         lang: c.lang ?? undefined,
+        acharyaSlug: activeSlug,
       });
       setMessages(r.messages);
     } catch (err) {
@@ -99,7 +110,7 @@ function ChatLogsInner() {
     if (value) next.set(key, value);
     else next.delete(key);
     setPage(0);
-    router.replace(adminRoute(`/admin/chat-logs?${next.toString()}`));
+    router.replace(adminRoute(`/admin/chat-logs?${next.toString()}`, activeSlug));
   }
 
   return (
@@ -132,7 +143,7 @@ function ChatLogsInner() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.replace(adminRoute('/admin/chat-logs'))}
+            onClick={() => router.replace(adminRoute('/admin/chat-logs', activeSlug))}
           >
             Clear
           </Button>

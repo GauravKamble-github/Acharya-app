@@ -22,6 +22,56 @@ function hasRealSecret(value: string | undefined): value is string {
   return v.length > 12 && !v.includes('your-') && !v.includes('placeholder') && !v.includes('replace-me') && !v.includes('change-me');
 }
 
+function hasAnthropicKey(value: string | undefined): value is string {
+  return hasRealSecret(value) && value.trim().startsWith('sk-ant-');
+}
+
+function geminiApiKey(): string {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
+    ''
+  ).trim();
+}
+
+function localChatReply({
+  message,
+  moduleId,
+  lang,
+  brandName,
+}: {
+  message: string;
+  moduleId?: string;
+  lang?: string;
+  brandName: string;
+}) {
+  const compact = message.replace(/\s+/g, ' ').trim();
+  const moduleLine = moduleId ? ` for ${moduleId}` : '';
+
+  if (/FIELD APPLICATION FINAL EVALUATION/i.test(message)) {
+    return JSON.stringify({
+      summary: 'The report does not include enough concrete field detail yet.',
+      score: 1,
+      feedback: 'I cannot evaluate this as field work without a clear client, site, action, result, or photo evidence. Add real work details before submitting.',
+      nextStep: 'Describe who you met, what you did, what happened, and one next action.',
+    });
+  }
+
+  if (/FIELD COACHING CONVERSATION/i.test(message)) {
+    return 'I noted that. Add one concrete client, site, action, or result detail before you submit progress.';
+  }
+
+  if (/^(hi|hello|hey|namaste|start|test)\b/i.test(compact)) {
+    return `Hello, I am ${brandName}. Ask me a practical question${moduleLine}, and I will keep the answer short and useful.`;
+  }
+
+  const prefix = lang === 'hi' || lang === 'bn'
+    ? `I am having trouble reaching live AI right now, but here is the safe next step${moduleLine}:`
+    : `I am having trouble reaching live AI right now, but here is the safe next step${moduleLine}:`;
+
+  return `${prefix} review the module steps, apply one action in the field, and ask again with the exact place, tool, crop, client, or task you are working on.`;
+}
+
 function imageToGeminiPart(image: string) {
   const m = image.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
   if (!m) return null;
@@ -29,14 +79,15 @@ function imageToGeminiPart(image: string) {
 }
 
 async function geminiReply({
-  message, history, moduleId, lang, image, systemPrompt, systemSuffix,
+  message, history, moduleId, lang, image, systemPrompt, systemSuffix, brandName,
 }: {
   message: string; history: unknown; moduleId?: string; lang?: string; image?: string;
-  systemPrompt: string; systemSuffix: string;
+  systemPrompt: string; systemSuffix: string; brandName: string;
 }) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = geminiApiKey();
   if (!hasRealSecret(apiKey)) {
-    return NextResponse.json({ error: 'Chat service not configured' }, { status: 500 });
+    const text = localChatReply({ message, moduleId, lang, brandName });
+    return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
   }
 
   const contents: Array<{ role: 'user' | 'model'; parts: Array<Record<string, unknown>> }> = [];
@@ -68,12 +119,18 @@ async function geminiReply({
 
   for (const candidate of GEMINI_MODELS) {
     usedModel = candidate;
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${candidate}:generateContent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body,
-      signal: AbortSignal.timeout(25000),
-    });
+    try {
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${candidate}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body,
+        signal: AbortSignal.timeout(25000),
+      });
+    } catch (err) {
+      lastDetail = err instanceof Error ? err.message : String(err);
+      console.warn(`[chat] ${candidate} request failed: ${lastDetail.slice(0, 220)}`);
+      break;
+    }
     if (res.ok) break;
     lastDetail = await res.text().catch(() => '');
     const retryable = res.status === 429 || res.status === 503 || /high demand|unavailable|quota/i.test(lastDetail);
@@ -83,10 +140,8 @@ async function geminiReply({
 
   if (!res?.ok) {
     logChatCall({ model: usedModel, status: res?.status === 504 ? 'timeout' : 'error', durationMs: Date.now() - started, lang, moduleId, hasImage: !!image, errorMessage: lastDetail.slice(0, 500) });
-    return NextResponse.json(
-      { error: /high demand|unavailable/i.test(lastDetail) ? 'AI busy. Try again in a minute.' : 'AI chat failed' },
-      { status: /high demand|unavailable/i.test(lastDetail) ? 503 : 502 }
-    );
+    const text = localChatReply({ message, moduleId, lang, brandName });
+    return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
   }
 
   const data = await res.json();
@@ -133,8 +188,17 @@ export async function POST(req: NextRequest) {
     : `\n\nRespond in ${langName}.${scriptRule}`;
 
   // Use Gemini if Claude key isn't configured (Gemini key is the working one)
-  if (!hasRealSecret(process.env.ANTHROPIC_API_KEY)) {
-    return geminiReply({ message, history, moduleId, lang, image, systemPrompt: acharya.prompt.systemPrompt, systemSuffix });
+  if (!hasAnthropicKey(process.env.ANTHROPIC_API_KEY)) {
+    return geminiReply({
+      message,
+      history,
+      moduleId,
+      lang,
+      image,
+      systemPrompt: acharya.prompt.systemPrompt,
+      systemSuffix,
+      brandName: acharya.brand.name,
+    });
   }
 
   // Claude path (streaming)

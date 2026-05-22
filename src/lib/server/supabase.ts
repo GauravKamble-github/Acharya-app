@@ -47,6 +47,13 @@ export function isMissingDbObject(error: unknown): boolean {
   );
 }
 
+export function isNetworkUnavailable(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const err = error as { message?: string; details?: string };
+  const text = `${err.message || ""} ${err.details || ""}`;
+  return /fetch failed|EACCES|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|network/i.test(text);
+}
+
 export function getAcharyaSlugFromRequest(req?: Request): AcharyaSlug {
   const fromHeader = req?.headers.get("x-acharya-slug");
   if (fromHeader) return normalizeAcharyaSlug(fromHeader);
@@ -86,17 +93,18 @@ export const dbConfigured = !!url && !!effectiveKey
   && effectiveKey !== "placeholder";
 
 // Per-acharya Supabase clients — each acharya can point to its own project
-const acharyaDbCache: Record<string, DB> = {};
+export function dbForSlug(_slug: AcharyaSlug): DB {
+  void _slug;
+  // NOTE (2026-05-21): All acharya tables currently live in the default DB with
+  // prefixed names (e.g. vajra_modules, taksha_modules). The per-acharya DBs
+  // either have unprefixed tables (vajra) or are empty (taksha). Until those
+  // DBs are re-provisioned with the correct prefixed schema, we route ALL
+  // acharya queries through dbPublic so that modules, chat logs, users, etc.
+  // actually resolve to existing tables. Re-enable per-acharya clients once
+  // the separate projects are fully set up.
+  return dbPublic;
 
-function envForSlug(slug: string, baseKey: string): string | undefined {
-  const uc = slug.toUpperCase();
-  // Both patterns: SUPABASE_URL_TAKSHA  and  TAKSHA_SUPABASE_URL
-  return process.env[`${baseKey}_${uc}`]
-    || process.env[`${uc}_${baseKey}`]
-    || undefined;
-}
-
-export function dbForSlug(slug: AcharyaSlug): DB {
+  /* Original per-acharya logic — re-enable after DB migration:
   if (acharyaDbCache[slug]) return acharyaDbCache[slug];
   const acharya = ACHARYAS.find((a) => a.slug === slug);
 
@@ -121,6 +129,7 @@ export function dbForSlug(slug: AcharyaSlug): DB {
 
   console.warn(`[dbForSlug] ⚠ default fallback for ${slug}: sameUrl=${achUrl === url} sameKey=${achKey === effectiveKey}`);
   return dbPublic;
+  */
 }
 
 export async function getAcharyaId(slug?: string): Promise<string | null> {

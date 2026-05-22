@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
 import { api, ApiError } from '@/lib/api-client';
 import { useStore } from '@/lib/store';
@@ -30,6 +30,7 @@ export default function PhoneGate({ children }: { children: React.ReactNode }) {
 }
 
 function LearnerPhoneGate({ children, hasSlug }: { children: React.ReactNode; hasSlug: boolean }) {
+  const router = useRouter();
   const { learnerId, userPhone, setUser, clearUser, setLang, lang } = useStore();
   const [checking, setChecking] = useState(true);
   const [step, setStep] = useState<Step>('phone');
@@ -367,7 +368,7 @@ function LearnerPhoneGate({ children, hasSlug }: { children: React.ReactNode; ha
                   <button
                     key={item.slug}
                     type="button"
-                    onClick={() => { window.location.href = `/${item.slug}/`; }}
+                    onClick={() => { router.push(`/${item.slug}/`); }}
                     className="w-full text-left border border-line bg-cream hover:bg-sage/70 rounded-xl transition-colors overflow-hidden"
                   >
                     <div className="flex items-stretch">

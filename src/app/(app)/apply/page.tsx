@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/lib/store';
 import { getTitle } from '@/lib/types';
+import { currentAcharyaBrand } from '@/lib/acharya-client';
 import { syncApplyLog, trackEvent } from '@/lib/learner-sync';
 import { api, ApiError } from '@/lib/api-client';
 import { errorCopy } from '@/lib/error-copy';
+import { speakWithBrowser, stopBrowserSpeech } from '@/lib/browser-speech';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
@@ -47,7 +49,7 @@ const prompts = {
     cancel: 'বাতিল',
     thinking: 'অর্জুন ভাবছে...',
     finalizing: 'অর্জুন মূল্যায়ন করছে...',
-    speaking: 'অর্জুন বলছে...',
+    speaking: 'বলছি...',
     score: 'প্রয়োগ স্কোর',
     feedback: 'অর্জুনের মূল্যায়ন',
     nextStep: 'পরবর্তী পদক্ষেপ',
@@ -88,7 +90,7 @@ const prompts = {
     cancel: 'रद्द',
     thinking: 'अर्जुन सोच रहा है...',
     finalizing: 'अर्जुन मूल्यांकन कर रहा है...',
-    speaking: 'अर्जुन बोल रहा है...',
+    speaking: 'बोल रहा हूँ...',
     score: 'अभ्यास स्कोर',
     feedback: 'अर्जुन का मूल्यांकन',
     nextStep: 'अगला क़दम',
@@ -129,7 +131,7 @@ const prompts = {
     cancel: 'Cancel',
     thinking: 'Arjun is thinking...',
     finalizing: 'Arjun is evaluating...',
-    speaking: 'Arjun is speaking...',
+    speaking: 'Speaking...',
     score: 'Application Score',
     feedback: "Arjun's Evaluation",
     nextStep: 'Next Step',
@@ -158,6 +160,78 @@ const prompts = {
 const MAX_IMAGE_DIM = 1024;
 const JPEG_QUALITY = 0.85;
 
+function collectUserReport(turns: Turn[]) {
+  return turns
+    .filter((t) => t.role === 'user' && t.content && t.content !== '(photo)')
+    .map((t) => t.content.trim())
+    .filter(Boolean)
+    .join(' | ');
+}
+
+function hasMeaningfulReport(turns: Turn[]) {
+  const hasPhoto = turns.some((t) => t.role === 'user' && !!t.photo);
+  const text = collectUserReport(turns)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (hasPhoto && text.length === 0) return true;
+  if (text.length < 24) return false;
+  if (/^(hi|hello|hey|test|testing|asdf|random|nothing|na|n\/a|ok|okay|yes|no)$/i.test(text)) return false;
+  if (/^(.)\1{5,}$/i.test(text.replace(/\s/g, ''))) return false;
+
+  const tokens = text.match(/[A-Za-z0-9\u0900-\u097F\u0980-\u09FF]+/g) || [];
+  return tokens.length >= 4;
+}
+
+function invalidApplyResult(): ApplyResult {
+  return {
+    summary: 'Not enough concrete field work was reported.',
+    score: 1,
+    feedback: 'This cannot be evaluated as real field application yet. Add a client, site, task, action, result, objection, or photo evidence before submitting.',
+    nextStep: 'Submit one specific field report: who/where, what you did, what happened, and the next action.',
+  };
+}
+
+function unavailableApplyResult(): ApplyResult {
+  return {
+    summary: 'The report was saved locally, but live evaluation was unavailable.',
+    score: 1,
+    feedback: 'The evaluator could not complete a reliable review right now. No positive score was assigned because the evaluation did not finish.',
+    nextStep: 'Try again with the same field details in a minute.',
+  };
+}
+
+function applyBusyLabel(
+  lang: keyof typeof prompts,
+  speakerName: string,
+  busyState: 'thinking' | 'finalizing' | 'speaking',
+) {
+  if (lang === 'bn') {
+    if (busyState === 'thinking') return `${speakerName} ভাবছে...`;
+    if (busyState === 'finalizing') return `${speakerName} মূল্যায়ন করছে...`;
+    return `${speakerName} বলছে...`;
+  }
+  if (lang === 'hi') {
+    if (busyState === 'thinking') return `${speakerName} सोच रहा है...`;
+    if (busyState === 'finalizing') return `${speakerName} मूल्यांकन कर रहा है...`;
+    return `${speakerName} बोल रहा है...`;
+  }
+  if (busyState === 'thinking') return `${speakerName} is thinking...`;
+  if (busyState === 'finalizing') return `${speakerName} is evaluating...`;
+  return `${speakerName} is speaking...`;
+}
+
+function normalizeApplyResult(value: ApplyResult | null, fallback: ApplyResult): ApplyResult {
+  if (!value || typeof value !== 'object') return fallback;
+  const score = Number(value.score);
+  return {
+    summary: typeof value.summary === 'string' && value.summary.trim() ? value.summary.trim() : fallback.summary,
+    score: Number.isFinite(score) ? Math.max(1, Math.min(10, Math.round(score))) : fallback.score,
+    feedback: typeof value.feedback === 'string' && value.feedback.trim() ? value.feedback.trim() : fallback.feedback,
+    nextStep: typeof value.nextStep === 'string' && value.nextStep.trim() ? value.nextStep.trim() : fallback.nextStep,
+  };
+}
+
 export default function ApplyPage() {
   const { lang, selectedModuleId, modules, voiceEnabled } = useStore();
 
@@ -178,6 +252,7 @@ export default function ApplyPage() {
 
   const p = prompts[lang];
   const currentModule = modules.find((m) => m.id === selectedModuleId);
+  const speakerName = currentAcharyaBrand().shortName;
 
   // Auto-scroll the thread on new turns
   useEffect(() => {
@@ -197,6 +272,7 @@ export default function ApplyPage() {
     return () => {
       const a = audioRef.current;
       if (a) { try { a.pause(); } catch { /* ignore */ } }
+      stopBrowserSpeech();
     };
   }, []);
 
@@ -212,8 +288,10 @@ export default function ApplyPage() {
 
   function stopAudio() {
     const a = audioRef.current;
-    if (!a) return;
-    try { a.pause(); a.src = ''; } catch { /* ignore */ }
+    if (a) {
+      try { a.pause(); a.src = ''; } catch { /* ignore */ }
+    }
+    stopBrowserSpeech();
     setSpeaking(false);
   }
 
@@ -290,6 +368,7 @@ export default function ApplyPage() {
       };
       await a.play().catch(() => { setSpeaking(false); });
     } catch {
+      await speakWithBrowser(text, lang);
       setSpeaking(false);
     }
   }
@@ -366,16 +445,18 @@ Latest user turn: "${sentText || '(submitted a photo — give a one-sentence obs
 
     const scoreMatch = turn.modelText.match(/(\d{1,2})\s*(?:\/|out of|में से|এর মধ্যে)\s*10/i);
     if (!scoreMatch) return;
-    const score = Math.max(1, Math.min(10, parseInt(scoreMatch[1], 10)));
-    const parsed: ApplyResult = {
+    const reportIsMeaningful = hasMeaningfulReport(nextHistory);
+    const score = reportIsMeaningful ? Math.max(1, Math.min(10, parseInt(scoreMatch[1], 10))) : 1;
+    let parsed: ApplyResult = {
       summary: turn.userText.slice(0, 120) || turn.modelText.slice(0, 120),
       score,
       feedback: turn.modelText,
       nextStep: lang === 'bn' ? 'পরের কথোপকথনে পরের পদক্ষেপ জানাও।' : lang === 'hi' ? 'अगली बातचीत में अगला कदम बताओ।' : 'Share the next field step in the next conversation.',
     };
+    if (!reportIsMeaningful) parsed = invalidApplyResult();
     setResult(parsed);
     setState('result');
-    const userText = nextHistory.filter((t) => t.role === 'user').map((t) => t.content).join(' | ');
+    const userText = collectUserReport(nextHistory);
     const hasAnyPhoto = nextHistory.some((t) => t.role === 'user' && !!t.photo);
     syncApplyLog(selectedModuleId, userText, parsed.score, parsed.feedback, parsed.nextStep, hasAnyPhoto);
     trackEvent('apply_voice_submit', selectedModuleId, {
@@ -391,6 +472,22 @@ Latest user turn: "${sentText || '(submitted a photo — give a one-sentence obs
     stopAudio();
     setState('finalizing');
     setError(null);
+    const userText = collectUserReport(history);
+    const hasAnyPhoto = history.some((t) => t.role === 'user' && !!t.photo);
+
+    if (!hasMeaningfulReport(history)) {
+      const parsed = invalidApplyResult();
+      setResult(parsed);
+      setState('result');
+      syncApplyLog(selectedModuleId, userText, parsed.score, parsed.feedback, parsed.nextStep, hasAnyPhoto);
+      trackEvent('apply_submit_invalid', selectedModuleId, {
+        score: parsed.score,
+        turns: history.length,
+        hasPhoto: hasAnyPhoto,
+      });
+      playArjunReply(`${parsed.summary}. ${parsed.feedback} ${parsed.nextStep}`);
+      return;
+    }
 
     const moduleLine = currentModule ? `${selectedModuleId} (${getTitle(currentModule, lang)})` : selectedModuleId;
     const finalPrompt = `FIELD APPLICATION FINAL EVALUATION.
@@ -406,6 +503,7 @@ Respond ONLY in this JSON format, no other text:
 }
 
 Score guide: 1-3 = incorrect procedure, 4-6 = correct direction but missing steps, 7-8 = good with minor gaps, 9-10 = textbook-perfect.
+If the report is only a greeting, random text, unrelated text, or too vague to prove field work, set score to 1 and ask for concrete field details.
 
 Write all four fields in the learner's language.`;
 
@@ -429,18 +527,17 @@ Write all four fields in the learner's language.`;
       if (!parsed) {
         parsed = {
           summary: history.find((t) => t.role === 'user')?.content.slice(0, 80) || '(report)',
-          score: 6,
+          score: 2,
           feedback: reply,
           nextStep: lang === 'bn' ? 'কাল আরেকটু বিস্তারিত বলো।' : lang === 'hi' ? 'कल और विस्तार से बताओ।' : 'Add more detail tomorrow.',
         };
       }
 
+      parsed = normalizeApplyResult(parsed, invalidApplyResult());
       setResult(parsed);
       setState('result');
 
       // Persist — combine all user turns into one "input" string
-      const userText = history.filter((t) => t.role === 'user').map((t) => t.content).join(' | ');
-      const hasAnyPhoto = history.some((t) => t.role === 'user' && !!t.photo);
       syncApplyLog(selectedModuleId, userText, parsed.score, parsed.feedback, parsed.nextStep, hasAnyPhoto);
       trackEvent('apply_submit', selectedModuleId, {
         score: parsed.score,
@@ -451,8 +548,16 @@ Write all four fields in the learner's language.`;
       // Play the feedback aloud if voice is enabled
       playArjunReply(`${parsed.summary}. ${parsed.feedback} ${parsed.nextStep}`);
     } catch (err) {
-      setState('conversation');
-      setError(err instanceof ApiError ? errorCopy(err, lang) : errorCopy(err, lang));
+      console.error(err);
+      const parsed = unavailableApplyResult();
+      setResult(parsed);
+      setState('result');
+      syncApplyLog(selectedModuleId, userText, parsed.score, parsed.feedback, parsed.nextStep, hasAnyPhoto);
+      trackEvent('apply_submit_unavailable', selectedModuleId, {
+        score: parsed.score,
+        turns: history.length,
+        hasPhoto: hasAnyPhoto,
+      });
     }
   }
 
@@ -602,7 +707,13 @@ Write all four fields in the learner's language.`;
   const isBusy = state === 'thinking' || state === 'finalizing';
   const composerHidden = isBusy || speaking;
   const placeholder = history.length > 0 ? p.placeholderAdd : p.placeholder;
-  const busyLabel = state === 'thinking' ? p.thinking : state === 'finalizing' ? p.finalizing : speaking ? p.speaking : '';
+  const busyLabel = state === 'thinking'
+    ? applyBusyLabel(lang, speakerName, 'thinking')
+    : state === 'finalizing'
+    ? applyBusyLabel(lang, speakerName, 'finalizing')
+    : speaking
+    ? applyBusyLabel(lang, speakerName, 'speaking')
+    : '';
 
   const emptyHint = (() => {
     if (history.length > 0) return null;

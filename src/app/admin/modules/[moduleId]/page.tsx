@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api-client';
 import { adminRoute } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import type { Module, Section, Content, Lang } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
@@ -24,6 +25,7 @@ const LANG_LABEL: Record<Lang, string> = {
 export default function ModuleEditorPage() {
   const params = useParams();
   const moduleId = params.moduleId as string;
+  const { activeSlug } = useAdminAcharya();
 
   const [mod, setMod] = useState<Module | null>(null);
   const [sections, setSections] = useState<SectionWithContent[]>([]);
@@ -37,7 +39,7 @@ export default function ModuleEditorPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await api.admin.module(moduleId);
+      const r = await api.admin.module(moduleId, activeSlug);
       setMod(r.module);
       setSections(r.sections);
     } catch (err) {
@@ -46,7 +48,7 @@ export default function ModuleEditorPage() {
     } finally {
       setLoading(false);
     }
-  }, [moduleId]);
+  }, [moduleId, activeSlug]);
 
   useEffect(() => { loadData(); }, [loadData]); // eslint-disable-line react-hooks/set-state-in-effect
 
@@ -63,7 +65,7 @@ export default function ModuleEditorPage() {
     setSaving(true);
     setMessage('');
     try {
-      await api.admin.upsertContent(editingSection, editLang, editBody);
+      await api.admin.upsertContent(editingSection, editLang, editBody, activeSlug);
       setMessage('Saved.');
       setEditingSection(null);
       loadData();
@@ -77,7 +79,7 @@ export default function ModuleEditorPage() {
 
   async function addSection() {
     try {
-      await api.admin.addSection(moduleId, sections.length + 1);
+      await api.admin.addSection(moduleId, sections.length + 1, activeSlug);
       loadData();
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Write failed';
@@ -87,7 +89,7 @@ export default function ModuleEditorPage() {
 
   async function updateSectionTitle(sectionId: string, field: string, value: string) {
     try {
-      await api.admin.updateSection(sectionId, { [field]: value });
+      await api.admin.updateSection(sectionId, { [field]: value }, activeSlug);
       loadData();
     } catch (err) {
       console.error(err);
@@ -97,7 +99,7 @@ export default function ModuleEditorPage() {
   async function deleteSection(sectionId: string) {
     if (!confirm('Delete this section and all its content?')) return;
     try {
-      await api.admin.deleteSection(sectionId);
+      await api.admin.deleteSection(sectionId, activeSlug);
       loadData();
     } catch (err) {
       console.error(err);
@@ -121,7 +123,7 @@ export default function ModuleEditorPage() {
       {/* Breadcrumb + header */}
       <div className="mb-6">
         <Link
-          href={adminRoute("/admin/modules")}
+          href={adminRoute("/admin/modules", activeSlug)}
           className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] uppercase text-muted hover:text-forest transition-colors"
         >
           <Icon name="arrowL" size={12} />

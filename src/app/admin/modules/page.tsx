@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api-client';
 import { adminRoute } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import type { Module } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
@@ -15,15 +16,25 @@ interface ModuleWithCounts extends Module {
 }
 
 export default function AdminModulesPage() {
+  const { activeSlug } = useAdminAcharya();
   const [modules, setModules] = useState<ModuleWithCounts[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.admin.modules()
-      .then((r) => setModules(r.modules))
+    let cancelled = false;
+    setLoading(true);
+    api.admin.modules(activeSlug)
+      .then((r) => {
+        if (!cancelled) setModules(r.modules);
+      })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeSlug]);
 
   if (loading) {
     return (
@@ -72,7 +83,7 @@ export default function AdminModulesPage() {
                     return (
                       <tr key={mod.id} className="border-t border-line hover:bg-cream/60 transition-colors">
                         <td className="px-4 py-3">
-                          <Link href={adminRoute(`/admin/modules/${mod.id}`)} className="block">
+                          <Link href={adminRoute(`/admin/modules/${mod.id}`, activeSlug)} className="block">
                             <div className="flex items-center gap-3">
                               <div className="w-9 h-9 rounded-full bg-sage flex items-center justify-center text-forest shrink-0">
                                 <Icon name="book" size={16} />
@@ -99,7 +110,7 @@ export default function AdminModulesPage() {
                         </td>
                         <td className="px-2 text-right">
                           <Link
-                            href={adminRoute(`/admin/modules/${mod.id}`)}
+                            href={adminRoute(`/admin/modules/${mod.id}`, activeSlug)}
                             className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:underline"
                           >
                             Edit

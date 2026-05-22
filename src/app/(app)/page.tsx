@@ -12,11 +12,13 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { useShellNavigation } from '@/components/shell/ShellNavigation';
 
 export default function HomeDashboard() {
   const { lang, modules, selectedModuleId, progress, quizAttempts } = useStore();
   const [videos, setVideos] = useState<Video[]>([]);
   const brand = currentAcharyaBrand();
+  const { navigateInShell } = useShellNavigation();
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +67,7 @@ export default function HomeDashboard() {
 
       {/* Continue learning */}
       {currentModule && (
-        <Link href={acharyaRoute("/learn")} className="block">
+        <button type="button" onClick={() => navigateInShell('/learn')} className="block w-full text-left">
           <Card tone="cream" padding="lg" className="hover:shadow-md transition-shadow group">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-sage flex items-center justify-center text-forest shrink-0">
@@ -94,7 +96,7 @@ export default function HomeDashboard() {
               />
             </div>
           </Card>
-        </Link>
+        </button>
       )}
 
       {/* North Star quick stats */}
@@ -127,7 +129,7 @@ export default function HomeDashboard() {
             {lang === 'bn' ? 'কী করতে চাও?' : lang === 'hi' ? 'क्या करना चाहते हो?' : 'What do you want to do?'}
           </Tag>
           <BriefLink
-            href={acharyaRoute("/learn")}
+            href="/learn"
             icon="book"
             title={t('learn', lang)}
             desc={lang === 'bn'
@@ -137,7 +139,7 @@ export default function HomeDashboard() {
               : '21 modules · read, mark complete, progress'}
           />
           <BriefLink
-            href={acharyaRoute("/quiz")}
+            href="/quiz"
             icon="quiz"
             title={t('quiz', lang)}
             desc={lang === 'bn'
@@ -147,7 +149,7 @@ export default function HomeDashboard() {
               : '5 MCQs · test yourself on each module'}
           />
           <BriefLink
-            href={acharyaRoute("/ask")}
+            href="/ask"
             icon="chat"
             title={t('ask', lang)}
             desc={lang === 'bn'
@@ -157,7 +159,7 @@ export default function HomeDashboard() {
               : 'Chat with Arjun · voice or text'}
           />
           <BriefLink
-            href={acharyaRoute("/apply")}
+            href="/apply"
             icon="hand"
             title={t('apply', lang)}
             desc={lang === 'bn'
@@ -167,7 +169,7 @@ export default function HomeDashboard() {
               : 'Field debrief · report after each visit'}
           />
           <BriefLink
-            href={acharyaRoute("/video")}
+            href="/video"
             icon="play"
             title={t('video', lang)}
             desc={lang === 'bn'
@@ -177,7 +179,7 @@ export default function HomeDashboard() {
               : '5 orientation videos · watch from day one'}
           />
           <BriefLink
-            href={acharyaRoute("/progress")}
+            href="/progress"
             icon="chart"
             title={t('me', lang)}
             desc={lang === 'bn'
@@ -194,13 +196,14 @@ export default function HomeDashboard() {
             <Tag tone="muted">
               {lang === 'bn' ? 'অরিয়েন্টেশন ভিডিও' : lang === 'hi' ? 'ओरिएंटेशन वीडियो' : 'Orientation videos'}
             </Tag>
-            <Link
-              href={acharyaRoute("/video")}
+            <button
+              type="button"
+              onClick={() => navigateInShell('/video')}
               className="font-mono text-[10px] tracking-[0.18em] uppercase text-forest hover:underline inline-flex items-center gap-1"
             >
               {lang === 'bn' ? 'সব দেখো' : lang === 'hi' ? 'सब देखो' : 'See all'}
               <Icon name="arrowR" size={11} />
-            </Link>
+            </button>
           </div>
           {videos.length === 0 ? (
             <Card tone="surface" padding="md">
@@ -211,10 +214,11 @@ export default function HomeDashboard() {
           ) : (
             <div className="space-y-2">
               {videos.slice(0, 3).map((video) => (
-                <Link
+                <button
                   key={video.id}
-                  href={acharyaRoute("/video")}
-                  className="block"
+                  type="button"
+                  onClick={() => navigateInShell('/video')}
+                  className="block w-full text-left"
                 >
                   <Card tone="surface" padding="none" className="overflow-hidden hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 p-2">
@@ -238,7 +242,7 @@ export default function HomeDashboard() {
                       </div>
                     </div>
                   </Card>
-                </Link>
+                </button>
               ))}
             </div>
           )}
@@ -292,8 +296,10 @@ function NorthStarCard({ num, label }: { num: string; label: string }) {
 function BriefLink({
   href, icon, title, desc,
 }: { href: string; icon: IconName; title: string; desc: string }) {
+  const { navigateInShell } = useShellNavigation();
+
   return (
-    <Link href={acharyaRoute(href)} className="block group">
+    <button type="button" onClick={() => navigateInShell(href)} className="block w-full text-left group">
       <Card tone="surface" padding="md" className="hover:shadow-md transition-shadow">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-full bg-sage flex items-center justify-center text-forest shrink-0">
@@ -310,6 +316,6 @@ function BriefLink({
           />
         </div>
       </Card>
-    </Link>
+    </button>
   );
 }

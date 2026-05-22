@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 
 interface LearnerRow {
   id: string;
@@ -21,6 +22,7 @@ interface LearnerRow {
 }
 
 export default function AdminLearnersPage() {
+  const { activeSlug } = useAdminAcharya();
   const [learners, setLearners] = useState<LearnerRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -28,16 +30,23 @@ export default function AdminLearnersPage() {
   const [pageSize, setPageSize] = useState(50);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    api.admin.learners(page)
+    api.admin.learners(page, activeSlug)
       .then((r) => {
+        if (cancelled) return;
         setLearners(r.learners);
         setTotalCount(r.totalCount);
         setPageSize(r.pageSize);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, activeSlug]);
 
   if (loading) {
     return (

@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { adminRoute } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
@@ -37,6 +38,7 @@ function scoreTone(score?: number): 'forest' | 'gold' | 'terra' {
 function ApplyLogsInner() {
   const router = useRouter();
   const params = useSearchParams();
+  const { activeSlug } = useAdminAcharya();
   const learnerId = params.get('learnerId') || '';
   const moduleId = params.get('moduleId') || '';
 
@@ -48,23 +50,35 @@ function ApplyLogsInner() {
   const [active, setActive] = useState<Row | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    api.admin.applyLogs({ page, learnerId: learnerId || undefined, moduleId: moduleId || undefined })
+    api.admin.applyLogs({
+      page,
+      learnerId: learnerId || undefined,
+      moduleId: moduleId || undefined,
+      acharyaSlug: activeSlug,
+    })
       .then((r) => {
+        if (cancelled) return;
         setRows(r.rows);
         setTotalCount(r.totalCount);
         setPageSize(r.pageSize);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page, learnerId, moduleId]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, learnerId, moduleId, activeSlug]);
 
   function updateFilter(key: 'learnerId' | 'moduleId', value: string) {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
     else next.delete(key);
     setPage(0);
-    router.replace(adminRoute(`/admin/apply-logs?${next.toString()}`));
+    router.replace(adminRoute(`/admin/apply-logs?${next.toString()}`, activeSlug));
   }
 
   return (
@@ -93,7 +107,7 @@ function ApplyLogsInner() {
           className="flex-1 min-w-[220px] border border-line rounded-full px-4 py-1.5 text-xs font-mono bg-paper focus:outline-none focus:ring-2 focus:ring-forest/30"
         />
         {(learnerId || moduleId) && (
-          <Button variant="ghost" size="sm" onClick={() => router.replace(adminRoute('/admin/apply-logs'))}>
+          <Button variant="ghost" size="sm" onClick={() => router.replace(adminRoute('/admin/apply-logs', activeSlug))}>
             Clear
           </Button>
         )}

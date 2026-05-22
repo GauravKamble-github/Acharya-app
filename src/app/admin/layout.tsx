@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signIn, signOut, getSessionEmail } from '@/lib/admin-auth';
@@ -10,11 +10,12 @@ import { Tag } from '@/components/ui/Tag';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import {
   ACHARYA_BRANDS,
+  ACHARYA_COLORS,
   adminRoute,
-  acharyaRoute,
-  currentAcharyaBrand,
+  acharyaRouteFor,
   stripAcharyaPrefix,
 } from '@/lib/acharya-client';
+import { AdminAcharyaProvider, useAdminAcharya } from '@/lib/admin-acharya-context';
 import type { ClientAcharyaSlug } from '@/lib/api-client';
 
 interface NavItem {
@@ -40,9 +41,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const pathname = usePathname();
-  const brand = currentAcharyaBrand();
-  const cleanPath = stripAcharyaPrefix(pathname);
 
   useEffect(() => {
     let cancelled = false;
@@ -150,6 +148,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // ============= AUTHENTICATED SHELL =============
   return (
+    <AdminAcharyaProvider>
+      <AdminShell
+        email={email}
+        onLogout={handleLogout}
+      >
+        {children}
+      </AdminShell>
+    </AdminAcharyaProvider>
+  );
+}
+
+function AdminShell({
+  children,
+  email,
+  onLogout,
+}: {
+  children: React.ReactNode;
+  email: string;
+  onLogout: () => void;
+}) {
+  const [acharyaMenuOpen, setAcharyaMenuOpen] = useState(false);
+  const acharyaMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const cleanPath = stripAcharyaPrefix(pathname);
+  const { activeSlug, activeBrand: brand, setActiveSlug } = useAdminAcharya();
+
+  function switchAcharya(nextSlug: ClientAcharyaSlug) {
+    setAcharyaMenuOpen(false);
+    if (nextSlug === activeSlug) return;
+    setActiveSlug(nextSlug);
+    const nextUrl = adminRoute(`${cleanPath || '/admin'}${window.location.search}`, nextSlug);
+    window.history.replaceState(null, '', nextUrl);
+  }
+
+  return (
     <div className="flex h-screen bg-paper">
       {/* Sidebar */}
       <aside className="w-60 bg-forest-deep text-cream flex flex-col shrink-0 border-r border-forest-deep">
@@ -166,23 +199,75 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <p className="text-[10.5px] text-cream/60 mt-3 truncate" title={email}>
             {email}
           </p>
-          <label className="block mt-3">
-            <span className="sr-only">Switch Acharya</span>
-            <select
-              value={brand.slug}
-              onChange={(e) => {
-                const nextSlug = e.target.value as ClientAcharyaSlug;
-                window.location.href = adminRoute(cleanPath || '/admin', nextSlug);
-              }}
-              className="w-full bg-cream/10 border border-cream/15 rounded-lg px-2.5 py-2 text-xs text-cream focus:outline-none focus:ring-2 focus:ring-gold/50"
+          <div ref={acharyaMenuRef} className="relative mt-3">
+            <button
+              type="button"
+              onClick={() => setAcharyaMenuOpen((open) => !open)}
+              className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 ${
+                acharyaMenuOpen
+                  ? 'bg-cream/15 border-gold/45'
+                  : 'bg-cream/10 border-cream/15 hover:bg-cream/15'
+              }`}
+              aria-label="Switch Acharya"
+              aria-haspopup="listbox"
+              aria-expanded={acharyaMenuOpen}
             >
-              {Object.values(ACHARYA_BRANDS).map((item) => (
-                <option key={item.slug} value={item.slug} className="text-ink">
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: ACHARYA_COLORS[brand.slug] || '#B5903A' }}
+              />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-xs font-semibold leading-tight text-cream">
+                  {brand.name}
+                </span>
+                <span className="block truncate text-[9.5px] leading-tight text-cream/45 mt-0.5">
+                  Switch Acharya
+                </span>
+              </span>
+              <Icon
+                name="chevD"
+                size={13}
+                className={`text-gold shrink-0 transition-transform ${acharyaMenuOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {acharyaMenuOpen && (
+              <div
+                role="listbox"
+                aria-label="Switch Acharya"
+                className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-line bg-paper py-1 shadow-2xl"
+              >
+                {Object.values(ACHARYA_BRANDS).map((item) => (
+                  <button
+                    key={item.slug}
+                    type="button"
+                    role="option"
+                    aria-selected={item.slug === brand.slug}
+                    onClick={() => switchAcharya(item.slug)}
+                    className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors hover:bg-sage ${
+                      item.slug === brand.slug ? 'bg-cream' : ''
+                    }`}
+                  >
+                    <span
+                      className="w-3 h-3 rounded-full shrink-0"
+                      style={{ backgroundColor: ACHARYA_COLORS[item.slug] || '#264E2E' }}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-serif text-sm leading-tight text-ink">
+                        {item.name}
+                      </span>
+                      <span className="block truncate text-[10px] leading-tight text-muted mt-0.5">
+                        {item.tagline}
+                      </span>
+                    </span>
+                    {item.slug === brand.slug && (
+                      <Icon name="check" size={14} className="text-forest shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <nav className="flex-1 py-3 px-2">
@@ -193,7 +278,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               return (
                 <li key={href}>
                   <Link
-                    href={adminRoute(href)}
+                    href={adminRoute(href, activeSlug)}
                     className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
                       active
                         ? 'bg-cream text-forest font-semibold'
@@ -211,14 +296,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div className="px-3 py-3 border-t border-cream/10 space-y-1">
           <Link
-            href={acharyaRoute("/")}
+            href={acharyaRouteFor(activeSlug, "/")}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-[12.5px] text-cream/70 hover:text-cream hover:bg-cream/10 transition-colors"
           >
             <Icon name="arrowL" size={14} />
             View Learner App
           </Link>
           <button
-            onClick={handleLogout}
+            onClick={onLogout}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[12.5px] text-cream/70 hover:text-terra hover:bg-cream/10 transition-colors"
           >
             <Icon name="close" size={14} />

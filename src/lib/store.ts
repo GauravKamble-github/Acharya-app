@@ -9,6 +9,10 @@ function storageName(): string {
 }
 
 interface AppState {
+  // Active Acharya context used when the app switches slugs without a full reload.
+  activeAcharyaSlug: string;
+  setAcharyaContext: (slug: string) => void;
+
   // Global selectors
   selectedModuleId: string;
   lang: Lang;
@@ -68,13 +72,36 @@ interface AppState {
 export const useStore = create<AppState>()(
   persist(
     (set) => ({
-      selectedModuleId: 'M01-intro',
+      activeAcharyaSlug: typeof window === 'undefined'
+        ? 'farmer'
+        : (window.location.pathname.split('/').filter(Boolean)[0] || 'farmer'),
+      setAcharyaContext: (slug) =>
+        set((state) => {
+          if (!slug || state.activeAcharyaSlug === slug) return {};
+          return {
+            activeAcharyaSlug: slug,
+            selectedModuleId: '',
+            modules: [],
+            progress: {},
+            quizAttempts: [],
+            earnedBadges: [],
+            chatHistory: {},
+          };
+        }),
+
+      selectedModuleId: '',
       lang: 'bn',
       setModule: (id) => set({ selectedModuleId: id }),
       setLang: (lang) => set({ lang }),
 
       modules: [],
-      setModules: (modules) => set({ modules }),
+      setModules: (modules) =>
+        set((state) => ({
+          modules,
+          selectedModuleId: modules.some((m) => m.id === state.selectedModuleId)
+            ? state.selectedModuleId
+            : modules[0]?.id || '',
+        })),
 
       progress: {},
       updateProgress: (moduleId, update) =>
@@ -199,6 +226,7 @@ export const useStore = create<AppState>()(
     {
       name: storageName(),
       partialize: (state) => ({
+        activeAcharyaSlug: state.activeAcharyaSlug,
         selectedModuleId: state.selectedModuleId,
         lang: state.lang,
         // Persist modules so pages hydrate instantly on reload; ModuleLoader
@@ -222,7 +250,6 @@ export const useStore = create<AppState>()(
         const saved = (state as unknown as { _savedAt?: number })._savedAt;
         if (saved && Date.now() - saved > 30 * 24 * 60 * 60 * 1000) {
           localStorage.removeItem(storageName());
-          window.location.reload();
         }
       },
     }

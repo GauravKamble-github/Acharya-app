@@ -8,6 +8,7 @@ import { syncChatMessage, trackEvent } from '@/lib/learner-sync';
 import { api, ApiError } from '@/lib/api-client';
 import { errorCopy } from '@/lib/error-copy';
 import { AudioQueue } from '@/lib/audio-queue';
+import { speakWithBrowser, stopBrowserSpeech } from '@/lib/browser-speech';
 import { splitIntoSpeakable } from '@/lib/sentence-split';
 import { Avatar } from '@/components/ui/Avatar';
 import { Tag } from '@/components/ui/Tag';
@@ -46,6 +47,7 @@ export default function AskPage() {
   useEffect(() => {
     return () => {
       audioQueueRef.current?.stop();
+      stopBrowserSpeech();
       audioQueueRef.current = null;
     };
   }, [selectedModuleId]);
@@ -65,6 +67,7 @@ export default function AskPage() {
     // Fresh audio queue for this turn. Cancels anything from the previous
     // reply so the user can't hear two Arjuns at once.
     audioQueueRef.current?.stop();
+    stopBrowserSpeech();
     if (voiceEnabled && audioRef.current) {
       audioQueueRef.current = new AudioQueue(audioRef.current, {
         onStateChange: (speaking) => {
@@ -110,7 +113,7 @@ export default function AskPage() {
           const { ready, leftover } = splitIntoSpeakable(ttsBuffer, 20);
           if (ready.length > 0) {
             for (const sentence of ready) {
-              const promise = api.ai.tts(sentence, lang).catch(() => null);
+              const promise = api.ai.tts(sentence, lang).catch(() => speakWithBrowser(sentence, lang).then(() => null));
               audioQueueRef.current.enqueue(promise);
             }
             ttsBuffer = leftover;
@@ -122,7 +125,7 @@ export default function AskPage() {
       // short last fragment that didn't reach the minLen threshold).
       const tail = ttsBuffer.trim();
       if (audioQueueRef.current && tail.length > 0) {
-        audioQueueRef.current.enqueue(api.ai.tts(tail, lang).catch(() => null));
+        audioQueueRef.current.enqueue(api.ai.tts(tail, lang).catch(() => speakWithBrowser(tail, lang).then(() => null)));
       }
 
       const chatEnd = Date.now();
@@ -143,6 +146,7 @@ export default function AskPage() {
         replaceLastAssistantMessage(selectedModuleId, msg);
       }
       audioQueueRef.current?.stop();
+      stopBrowserSpeech();
       setVoiceState('idle');
     } finally {
       setLoading(false);

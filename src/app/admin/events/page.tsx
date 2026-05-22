@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { adminRoute } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +22,7 @@ interface Row {
 function EventsInner() {
   const router = useRouter();
   const params = useSearchParams();
+  const { activeSlug } = useAdminAcharya();
   const learnerId = params.get('learnerId') || '';
   const eventType = params.get('eventType') || '';
 
@@ -33,24 +35,36 @@ function EventsInner() {
   const [active, setActive] = useState<Row | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    api.admin.events({ page, learnerId: learnerId || undefined, eventType: eventType || undefined })
+    api.admin.events({
+      page,
+      learnerId: learnerId || undefined,
+      eventType: eventType || undefined,
+      acharyaSlug: activeSlug,
+    })
       .then((r) => {
+        if (cancelled) return;
         setRows(r.rows);
         setTotalCount(r.totalCount);
         setPageSize(r.pageSize);
         setDistinctTypes(r.distinctTypes);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [page, learnerId, eventType]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, learnerId, eventType, activeSlug]);
 
   function updateFilter(key: 'learnerId' | 'eventType', value: string) {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
     else next.delete(key);
     setPage(0);
-    router.replace(adminRoute(`/admin/events?${next.toString()}`));
+    router.replace(adminRoute(`/admin/events?${next.toString()}`, activeSlug));
   }
 
   return (
@@ -82,7 +96,7 @@ function EventsInner() {
           ))}
         </select>
         {(learnerId || eventType) && (
-          <Button variant="ghost" size="sm" onClick={() => router.replace(adminRoute('/admin/events'))}>
+          <Button variant="ghost" size="sm" onClick={() => router.replace(adminRoute('/admin/events', activeSlug))}>
             Clear
           </Button>
         )}

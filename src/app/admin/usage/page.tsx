@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { withAcharyaPath } from '@/lib/api-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Icon, type IconName } from '@/components/ui/Icon';
@@ -52,6 +53,7 @@ const compactUsd = (n: number) =>
 const num = (n: number) => n.toLocaleString();
 
 export default function AdminUsagePage() {
+  const { activeSlug } = useAdminAcharya();
   const [data, setData] = useState<UsageResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export default function AdminUsagePage() {
   async function load() {
     setLoading(true);
     try {
-      const res = await fetch(withAcharyaPath('/api/admin/usage'), { credentials: 'same-origin' });
+      const res = await fetch(withAcharyaPath('/api/admin/usage', activeSlug), { credentials: 'same-origin' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setData(await res.json());
       setErr(null);
@@ -70,7 +72,7 @@ export default function AdminUsagePage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [activeSlug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (

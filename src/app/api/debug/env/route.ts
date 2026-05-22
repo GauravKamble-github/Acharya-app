@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server/auth";
 import { dbConfigured, usingServiceRole, effectiveKeyRole } from "@/lib/server/supabase";
 
 /**
- * Safe diagnostic endpoint — presence/length only, never the values.
- *
- * curl http://localhost:3000/api/debug/env
+ * Admin-only diagnostics. Learner-facing UI must not expose env names,
+ * table names, secret lengths, or provider configuration details.
  */
 export async function GET() {
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "";
-  const adminPassword = process.env.ADMIN_PASSWORD || "";
-  const sessionSecret = process.env.SESSION_SECRET || "";
+  const guard = await requireAdmin();
+  if (guard instanceof NextResponse) return guard;
 
   return NextResponse.json({
     supabase: {
@@ -21,23 +20,14 @@ export async function GET() {
       hasAnonEnv: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     },
     admin: {
-      // email is fine to echo — it's already NEXT_PUBLIC_ (shipped to browser)
-      email: adminEmail || null,
-      // passwords/secrets: only expose length + trim-safety hints
-      hasAdminPassword: adminPassword.length > 0,
-      adminPasswordLength: adminPassword.length,
-      adminPasswordStartsWithSpace: adminPassword.length > 0 && adminPassword[0] === " ",
-      adminPasswordEndsWithSpace:
-        adminPassword.length > 0 && adminPassword[adminPassword.length - 1] === " ",
-      adminPasswordHasTrailingNewline:
-        adminPassword.length > 0 && /[\r\n]$/.test(adminPassword),
-      hasSessionSecret: sessionSecret.length > 0,
-      sessionSecretLength: sessionSecret.length,
-      usingDefaultSessionSecret: sessionSecret === "arjun-dev-secret-change-me",
+      hasAdminPassword: !!process.env.ADMIN_PASSWORD,
+      hasSessionSecret: !!process.env.SESSION_SECRET,
+      usingDefaultSessionSecret: process.env.SESSION_SECRET === "arjun-dev-secret-change-me",
     },
     other: {
       nodeEnv: process.env.NODE_ENV,
       hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+      hasGeminiKey: !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY),
       hasGoogleTtsKey: !!process.env.GOOGLE_TTS_KEY,
     },
   });

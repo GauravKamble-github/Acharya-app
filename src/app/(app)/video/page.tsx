@@ -22,8 +22,10 @@ export default function VideoPage() {
     async function loadVideos() {
       setLoading(true);
       try {
-        // Arjun Video tab always shows the KarmYog Vatika orientation library.
-        const vids = await api.content.videos('M15-video-library');
+        const moduleVideos = selectedModuleId ? await api.content.videos(selectedModuleId) : [];
+        const vids = moduleVideos.length > 0
+          ? moduleVideos
+          : await api.content.videos('M15-video-library');
         if (!cancelled) setVideos(vids);
       } catch (err) {
         console.error('Failed to load videos:', err);
@@ -52,10 +54,10 @@ export default function VideoPage() {
           title={t('noVideos', lang)}
           description={
             lang === 'bn'
-              ? 'এখনও ভিডিও লাইব্রেরিতে কিছু নেই। অ্যাডমিন যোগ করলে এখানে দেখতে পাবে।'
+              ? 'এই মডিউলের ভিডিও এখনো প্রস্তুত নয়। শেখার অংশ পড়ো, কুইজ দাও, অথবা পরে আবার দেখো।'
               : lang === 'hi'
-              ? 'वीडियो लाइब्रेरी में अभी कुछ नहीं। एडमिन जोड़ेगा तो यहाँ दिखेगा।'
-              : "The orientation library is empty right now — videos will appear here as they're added."
+              ? 'इस मॉड्यूल के वीडियो अभी तैयार नहीं हैं। सीखने वाला भाग पढ़ें, क्विज़ करें, या बाद में फिर देखें।'
+              : "Videos for this module are not ready yet. Use Learn and Quiz for now, then check this tab again later."
           }
         />
       </div>
@@ -66,7 +68,7 @@ export default function VideoPage() {
     <div className="max-w-5xl mx-auto px-4 lg:px-6 py-5">
       <div className="mb-4">
         <Tag tone="muted">
-          Video Library · {videos.length} Orientation Videos
+          Video Library · {videos.length} Video{videos.length === 1 ? '' : 's'}
         </Tag>
       </div>
 

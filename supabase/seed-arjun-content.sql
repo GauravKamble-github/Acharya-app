@@ -1,0 +1,849 @@
+-- Arjun Acharya v1 — seed content (generated)
+-- Regenerate: node scripts/generate-arjun-seed.js
+-- Generated: 2026-05-21T06:18:22.690Z
+
+-- Idempotent: wipe before seeding
+TRUNCATE arjun_videos, arjun_content, arjun_sections, arjun_modules CASCADE;
+
+-- MODULES
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M00-welcome', 'MahAcharyaJi-র তরফে স্বাগতম', 'MahAcharyaJi की ओर से स्वागत', 'Welcome from MahAcharyaJi', '🙏', 0, 'foundation', 'মূল', 'आधार', 'Foundation');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M01-north-star', '৩ মাসের চারটি লক্ষ্য', '3 महीने के चार लक्ष्य', 'The 3-Month North Star', '⭐', 1, 'foundation', 'foundation', 'foundation', 'foundation');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M02-who-we-are', 'আমরা কারা', 'हम कौन हैं', 'Who We Are', '🏛️', 2, 'foundation', 'foundation', 'foundation', 'foundation');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M03-what-we-sell', 'আমরা কী বিক্রি করি', 'हम क्या बेचते हैं', 'What We Sell — 16-Module Catalogue', '📦', 3, 'foundation', 'foundation', 'foundation', 'foundation');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M04-club-ecosystem', 'ক্লাব ইকোসিস্টেম', 'क्लब इकोसिस्टम', 'The Club Ecosystem', '🌿', 4, 'ecosystem', 'ইকোসিস্টেম', 'इकोसिस्टम', 'Ecosystem');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M05-pricing-playbook', 'মূল্য নির্ধারণ প্লেবুক', 'प्राइसिंग प्लेबुक', 'Pricing Playbook', '💰', 5, 'sales', 'বিক্রয়', 'सेल्स', 'Sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M06-vatika-ai', 'Vatika.AI', 'Vatika.AI', 'Vatika.AI', '🤖', 6, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M07-proposal-writing', 'প্রস্তাব লেখা', 'प्रस्ताव लिखना', 'Proposal Writing', '📝', 7, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M08-sales-cycle', 'বিক্রয় চক্র', 'सेल्स साइकल', 'The Sales Cycle', '🔁', 8, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M09-case-studies', 'কেস স্টাডি — ৯টি উদাহরণ', 'केस स्टडीज़ — 9 उदाहरण', 'Case Studies — 9 Exemplars', '📚', 9, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M10-maintenance', 'রক্ষণাবেক্ষণ পরিষেবা', 'रखरखाव ऑफरिंग', 'Maintenance Offering', '🔧', 10, 'operations', 'পরিষেবা', 'ऑपरेशंस', 'Operations');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M11-master-franchisee', 'মাস্টার ফ্র্যাঞ্চাইজি সুযোগ', 'मास्टर फ्रेंचाइज़ी अवसर', 'Master Franchisee Opportunity', '🏢', 11, 'ecosystem', 'ecosystem', 'ecosystem', 'ecosystem');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M12-behtar-life-shop', 'Behtar Life Shop খুচরা', 'Behtar Life Shop रिटेल', 'Behtar Life Shop Retail', '🛍️', 12, 'ecosystem', 'ecosystem', 'ecosystem', 'ecosystem');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M13-channel-partners', 'চ্যানেল পার্টনার — পরিচালক ও সঞ্চালক', 'चैनल पार्टनर — परिचालक और संचालक', 'Channel Partners — Parichalak & Sanchalak', '🤝', 13, 'ecosystem', 'ecosystem', 'ecosystem', 'ecosystem');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M14-objection-handling', 'আপত্তি সামলানো', 'आपत्ति सँभालना', 'Objection Handling', '🛡️', 14, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M15-video-library', 'ভিডিও লাইব্রেরি', 'वीडियो लाइब्रेरी', 'Video Orientation Library', '🎬', 15, 'resources', 'সংস্থান', 'संसाधन', 'Resources');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M16-ops-handover', 'অপারেশন ও হস্তান্তর', 'ऑपरेशंस और हैंडओवर', 'Operations & Handover', '📋', 16, 'operations', 'operations', 'operations', 'operations');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M17-faq', 'প্রশ্নোত্তর', 'अक्सर पूछे जाने वाले सवाल', 'FAQ', '❓', 17, 'resources', 'resources', 'resources', 'resources');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M18-pitch-sequence', 'পিচ সিকোয়েন্স — ৬ ধাপ', 'पिच सीक्वेंस — 6 कदम', 'The Pitch Sequence — 6 Steps', '🎯', 18, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M19-meeting-playbook', 'মিটিং প্লেবুক — মিনিটে মিনিটে', 'मीटिंग प्लेबुक — मिनट-दर-मिनट', 'Meeting Playbook — Minute-by-Minute', '💼', 19, 'sales', 'sales', 'sales', 'sales');
+INSERT INTO arjun_modules (id, title_bn, title_hi, title_en, icon, sort_order, group_key, group_label_bn, group_label_hi, group_label_en) VALUES ('M20-first-week', 'প্রথম সপ্তাহের চেকলিস্ট', 'पहले हफ्ते की चेकलिस्ट', 'First-Week Checklist', '✅', 20, 'resources', 'resources', 'resources', 'resources');
+
+-- SECTIONS + CONTENT
+DO $$
+DECLARE sec_id UUID;
+BEGIN
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M00-welcome', 'Vatika পরিবারে স্বাগতম', 'Vatika परिवार में स्वागत', 'Welcome to the Vatika Family', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', 'KarmYog Vatika বিক্রয় ও পরিষেবা দলে স্বাগতম। তুমি একটি চাকরি নয়, একটি কোম্পানি নয় — একটি তিন দশকের অনুশীলনে যোগ দিচ্ছো। MahAcharyaJi তোমার জন্য একটি সংক্ষিপ্ত স্বাগত বার্তা রেকর্ড করবেন, যা শীঘ্রই এখানে দেখা যাবে। ততক্ষণ পর্যন্ত, তোমার প্রশিক্ষক অর্জুন তোমাকে Vatika বিক্রি করতে এবং আমাদের ক্লায়েন্টদের পরিষেবা দিতে যা যা জানা দরকার, সবকিছু বলবে।
+
+Vatika আমরা যে বাগান বানাই, সেটা নয়। এটা একটি অভয়ারণ্য যেখানে প্রতিবেশীরা একসাথে শেখে, বাড়ে এবং ভালোভাবে বাঁচে। তোমার কাজ হলো সেই অভয়ারণ্য বিক্রি করা, তারপর প্রতি মাসে পরিষেবা দেওয়া।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', 'KarmYog Vatika सेल्स और सर्विस टीम में स्वागत है। तुम नौकरी में नहीं, कंपनी में नहीं — तीस साल के एक अभ्यास में जुड़ रहे हो। MahAcharyaJi जल्द ही तुम्हारे लिए एक छोटा स्वागत संदेश रिकॉर्ड करेंगे, जो यहाँ दिखेगा। तब तक अर्जुन — तुम्हारा ट्रेनर — तुम्हें Vatika बेचने और हमारे ग्राहकों की सेवा करने के लिए सब कुछ समझाएगा।
+
+Vatika वह बाग़ नहीं जो हम लगाते हैं। यह वह पवित्र स्थान है जहाँ पड़ोसी मिलकर सीखते, बढ़ते और बेहतर जीते हैं। तुम्हारा काम है वह स्थान बेचना, फिर हर महीने उसकी सेवा करना।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Welcome to the KarmYog Vatika Sales & Service team. You are joining a thirty-year practice — not a job, not a company, a practice. MahAcharyaJi has recorded a short welcome for you, which will appear here soon. Until then, this trainer — Arjun — will walk you through everything you need to know to start selling Vatikas and serving our clients.
+
+A Vatika is not a garden we install. It is a sanctuary the neighbourhood comes together to learn, grow, and live better. Your job is to sell that sanctuary, then serve it every month.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M00-welcome', 'MahAcharyaJi-র ভিডিও (শীঘ্রই আসছে)', 'MahAcharyaJi का वीडियो (जल्द आएगा)', 'Video from MahAcharyaJi (coming soon)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', 'MahAcharyaJi একটি বিশেষ স্বাগত ভিডিও রেকর্ড করবেন যেখানে তিনি আমাদের ৩ মাসের উত্তরলক্ষ্য, KarmYog-এর অংশ হওয়া মানে কী, এবং একজন বিক্রয় ও পরিষেবা সদস্য হিসেবে তোমার ভূমিকা সম্পর্কে বলবেন। যতক্ষণ তা রেকর্ড না হয়, M15-এ ৫টি KarmYog Vatika ওরিয়েন্টেশন ভিডিও দেখো।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', 'MahAcharyaJi एक खास स्वागत वीडियो रिकॉर्ड करेंगे जिसमें वे हमारे 3-महीने के लक्ष्य, KarmYog का हिस्सा होने का क्या अर्थ है, और सेल्स और सर्विस टीम के सदस्य के रूप में तुम्हारी भूमिका के बारे में बताएँगे। जब तक वह रिकॉर्ड नहीं होता, M15 वीडियो लाइब्रेरी में पाँच KarmYog Vatika ओरिएंटेशन वीडियो देखो।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'MahAcharyaJi will record a dedicated welcome video explaining our 3-month North Star, what it means to be part of KarmYog, and how you should think about your role as a Sales & Service team member. Until it is recorded, watch the 5 KarmYog Vatika orientation videos in M15 — Video Library.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M01-north-star', 'বাঁধনের লক্ষ্য — ৩ মাসে ₹১.০৮৫ কোটি', 'बाँधनेवाला लक्ष्य — 3 महीनों में ₹1.085 करोड़', 'The Binding Objective — ₹1.085 Crore in 3 Months', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', 'দলের প্রত্যেক সদস্যকে মুখস্থ করতে হবে চারটি বাক্যাংশ। যে কোনো মুহূর্তে — ঘুম থেকে উঠে, বাসে কেউ জিজ্ঞেস করলে, MahAcharyaJi পরীক্ষা করলে — তুমি বলতে পারবে। এই চারটি লক্ষ্য পুরো দলের কাজকে একসাথে বাঁধে।
+
+১. ১০০ TMIL — ১০০টি বাণিজ্যিক রক্ষণাবেক্ষণ চুক্তি। ₹৩০ লাখ।
+২. ১০০ Balconies — ১০০টি আবাসিক রক্ষণাবেক্ষণ চুক্তি। ₹৬ লাখ।
+৩. ১০ Projects — এককালীন প্রকল্প বুকিং। ₹৫০ লাখ।
+৪. দৈনিক ₹২৫,০০০ বিক্রি — খুচরা walk-in। ₹২২.৫ লাখ।
+
+মোট: ৩ মাসে ₹১.০৮৫ কোটি। তোমার প্রতিটি সেলস কল, প্রতিটি সাইট ভিজিট, প্রতিটি প্রস্তাব — এই চারটি সংখ্যার কমপক্ষে একটিকে এগিয়ে নিয়ে যেতে হবে। না হলে, কেন করছো তা নিজেকে জিজ্ঞেস করো।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', 'टीम के हर सदस्य को चार बातें याद करनी हैं। किसी भी पल — नींद से उठाकर, बस में किसी के पूछने पर, MahAcharyaJi की परीक्षा में — तुम बता पाओ। ये चार लक्ष्य पूरी टीम के काम को एक साथ बाँधते हैं।
+
+1. 100 TMIL — 100 व्यावसायिक रखरखाव अनुबंध। ₹30 लाख।
+2. 100 Balconies — 100 आवासीय रखरखाव अनुबंध। ₹6 लाख।
+3. 10 Projects — एकमुश्त प्रोजेक्ट बुकिंग। ₹50 लाख।
+4. रोज़ ₹25,000 बिक्री — रिटेल walk-in। ₹22.5 लाख।
+
+कुल: 3 महीनों में ₹1.085 करोड़। तुम्हारी हर सेल्स कॉल, हर साइट विज़िट, हर प्रस्ताव — इन चार संख्याओं में से कम से कम एक को आगे बढ़ाना चाहिए। अगर नहीं, तो खुद से पूछो क्यों कर रहे हो।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Four phrases every member of the team must memorise. At any moment — woken from sleep, asked on a bus, quizzed by MahAcharyaJi — you must be able to recite them. These four targets are the ONE thing that ties the whole team''s work together.
+
+1. 100 TMIL — 100 commercial maintenance contracts. ₹30 lakh.
+2. 100 Balconies — 100 residential maintenance contracts. ₹6 lakh.
+3. 10 Projects — one-time project bookings. ₹50 lakh.
+4. ₹25,000/day daily sales — retail walk-ins. ₹22.5 lakh.
+
+Total: ₹1.085 crore over three months. Every sales call, every site visit, every proposal you write must move at least one of these four numbers. If it does not, ask why you are doing it.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M01-north-star', '১ — ১০০ TMIL (বাণিজ্যিক রক্ষণাবেক্ষণ)', '1 — 100 TMIL (व्यावसायिक रखरखाव)', '1 — 100 TMIL (commercial maintenance)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', 'অফিস, দোকান, হাসপাতাল, স্কুলে ১০০টি বাণিজ্যিক রক্ষণাবেক্ষণ চুক্তি — ভিতরে, TMIL-ধাঁচের।
+
+এখানে "TMIL" একটি প্যাটার্ন নাম, নির্দিষ্ট ক্লায়েন্ট নয়। TMIL ক্লায়েন্ট (মুম্বাই, ১২০ গাছ ১৯+ মাস ধরে ₹১২,০০০/মাসে) হলো মূল উদাহরণ। মালি একটি রুটিনে যায় — দৈনিক, সপ্তাহে তিনবার, যা স্কোপ অনুযায়ী। গড় চুক্তির আকার: ₹১০,০০০/মাস।
+
+১০০ চুক্তি × ₹১০,০০০/মাস = ₹১০ লাখ/মাস = ৩ মাসে ₹৩০ লাখ।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', 'ऑफिस, दुकान, अस्पताल, स्कूल में 100 व्यावसायिक रखरखाव अनुबंध — इनडोर, TMIL-पैटर्न।
+
+यहाँ "TMIL" एक पैटर्न नाम है, कोई विशिष्ट ग्राहक नहीं। TMIL ग्राहक (मुंबई, 120 पौधे 19+ महीनों से ₹12,000/माह) मूल उदाहरण है। माली एक नियमित रूटीन पर जाता है — रोज़, हफ्ते में तीन बार, स्कोप के अनुसार। औसत अनुबंध आकार: ₹10,000/माह।
+
+100 अनुबंध × ₹10,000/माह = ₹10 लाख/माह = 3 महीनों में ₹30 लाख।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '100 commercial maintenance contracts in offices, shops, hospitals, schools — indoor, TMIL-pattern.
+
+"TMIL" here is a PATTERN NAME, not a specific client. TMIL the client (Mumbai, 120 plants for ₹12,000/month across 19+ months) is the archetype. The gardener visits on a routine — daily, thrice-weekly, whatever the scope requires. Average contract size: ₹10,000/month.
+
+100 contracts × ₹10,000/month = ₹10 lakh/month = ₹30 lakh in 3 months.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M01-north-star', '২ — ১০০ Balconies (আবাসিক রক্ষণাবেক্ষণ)', '2 — 100 Balconies (आवासीय रखरखाव)', '2 — 100 Balconies (residential maintenance)', 2) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '১০০টি আবাসিক রক্ষণাবেক্ষণ চুক্তি — বারান্দা, বসার ঘর, ছাদ, প্রবেশদ্বার, অ্যাপার্টমেন্ট-স্কেল। নাম "Balconies" কিন্তু যেকোনো আবাসিক স্থান অন্তর্ভুক্ত।
+
+গড় টিকিট: ₹২,০০০/মাস (ব্যান্ড ₹১,৫০০ নূন্যতম থেকে ₹২৬,০০০ প্রিমিয়াম মিশ্রা জি পর্যন্ত। গড় ₹২,০০০)।
+
+১০০ চুক্তি × ₹২,০০০/মাস = ₹২ লাখ/মাস = ৩ মাসে ₹৬ লাখ।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '100 आवासीय रखरखाव अनुबंध — बालकनी, बैठक, छत, प्रवेश, अपार्टमेंट-स्केल। नाम "Balconies" है पर कोई भी आवासीय जगह शामिल है।
+
+औसत टिकट: ₹2,000/माह (बैंड ₹1,500 न्यूनतम से ₹26,000 प्रीमियम मिश्रा जी तक। औसत ₹2,000)।
+
+100 अनुबंध × ₹2,000/माह = ₹2 लाख/माह = 3 महीनों में ₹6 लाख।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '100 residential maintenance contracts — balconies, living rooms, terraces, entrances, apartment-scale. The name is "Balconies" but it covers any residential space, not just balconies.
+
+Average ticket: ₹2,000/month (the band is ₹1,500 floor for minimal sites like Dr Kochgaway, up to ₹26,000 ceiling for premium like Mishra Ji. Average sits at ₹2,000 across a diverse residential book).
+
+100 contracts × ₹2,000/month = ₹2 lakh/month = ₹6 lakh in 3 months.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M01-north-star', '৩ — ১০ Projects (এককালীন)', '3 — 10 Projects (एकमुश्त)', '3 — 10 Projects (one-time)', 3) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '১০টি এককালীন প্রকল্প বুকিং, অনুগৃহীতা-স্কেল বা ঝুনঝুনওয়ালা-স্কেল। বাণিজ্যিক ক্লায়েন্ট রক্ষণাবেক্ষণের উপরে বায়োফিলিক ফিচার যোগ করতে পারে, আবাসিক duplex ইনস্টল বা একটি নতুন Vatika খোলা।
+
+গড় টিকিট: ₹৫ লাখ। (পরিসীমা ₹৭৯K Sourabh Thakur → ₹৮L Jhunjhunwala। গড় আমাদের সাধারণ আবাসিক/বাণিজ্যিক প্রকল্পের জন্য ₹৫ লাখ।)
+
+১০ প্রকল্প × ₹৫ লাখ = ৩ মাসে ₹৫০ লাখ বুকিং।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '10 एकमुश्त प्रोजेक्ट बुकिंग, अनुगृहिता-स्केल या झुनझुनवाला-स्केल। व्यावसायिक ग्राहक रखरखाव के ऊपर बायोफिलिक फ़ीचर जोड़ सकता है, आवासीय duplex इंस्टॉल, या नई Vatika खोलना।
+
+औसत टिकट: ₹5 लाख। (रेंज ₹79K Sourabh Thakur → ₹8L Jhunjhunwala। हमारे सामान्य आवासीय/व्यावसायिक प्रोजेक्ट के लिए औसत ₹5 लाख।)
+
+10 प्रोजेक्ट × ₹5 लाख = 3 महीनों में ₹50 लाख बुकिंग।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '10 one-time project bookings at Anugrahita-scale or Jhunjhunwala-scale. Could be for a commercial client adding a biophilic feature on top of maintenance, could be a residential project like a duplex install, could be a new Vatika opening.
+
+Average ticket: ₹5 lakh. (Range ₹79K Sourabh Thakur → ₹8L Jhunjhunwala. Arc of ₹5 lakh is what we book for typical sizable residential or commercial projects.)
+
+10 projects × ₹5 lakh = ₹50 lakh in bookings over 3 months.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M01-north-star', '৪ — দৈনিক ₹২৫,০০০ খুচরা বিক্রি (C2 + RD + DM)', '4 — रोज़ ₹25,000 रिटेल बिक्री (C2 + RD + DM)', '4 — ₹25,000/day daily sales (retail walk-ins from C2 + RD + DM)', 4) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', 'আমাদের তিনটি রিটেল Vatika-র দৈনিক খুচরা walk-in বিক্রি। গড়ে দিনে ₹২৫,০০০।
+
+C2 = Cascade 2 Uniworld Vatika।
+RD = Rosedale Vatika।
+DM = Downtown Mall Vatika (নতুন)।
+NV = Hazaratullah Nursery — শুধু ব্যাকএন্ড সরবরাহ, সরাসরি রাজস্ব নয়।
+
+₹২৫,০০০/দিন × ৩০ = ₹৭.৫ লাখ/মাস = ৩ মাসে ₹২২.৫ লাখ।
+
+লক্ষ্য পূরণের জন্য, প্রতিটি রিটেল Vatika-র তিনটি জিনিস লাগবে — পর্যাপ্ত ইনভেন্টরি, প্রশিক্ষিত সেলস স্টাফ, এবং তাদের ক্ষমতায়নের সিস্টেম + কোল্যাটেরাল।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', 'हमारी तीन रिटेल Vatika-s की रोज़ की walk-in रिटेल बिक्री। औसत ₹25,000 रोज़।
+
+C2 = Cascade 2 Uniworld Vatika।
+RD = Rosedale Vatika।
+DM = Downtown Mall Vatika (नई)।
+NV = Hazaratullah Nursery — केवल बैकएंड फ़ीड, सीधी आय नहीं।
+
+₹25,000/दिन × 30 = ₹7.5 लाख/माह = 3 महीनों में ₹22.5 लाख।
+
+लक्ष्य हिट करने के लिए, हर रिटेल Vatika को तीन चीज़ें चाहिए — पर्याप्त इन्वेंटरी, प्रशिक्षित सेल्स स्टाफ, और उन्हें सशक्त करने के सिस्टम + कोलैटरल।', 'published');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Daily retail walk-in sales from our three retail Vatikas. ₹25,000 per day average.
+
+C2 = Cascade 2 Uniworld Vatika.
+RD = Rosedale Vatika.
+DM = Downtown Mall Vatika (new).
+NV = Hazaratullah Nursery — backend feed only, NOT direct revenue. NV supplies plants to the three retail Vatikas.
+
+₹25,000/day × 30 = ₹7.5 lakh/month = ₹22.5 lakh in 3 months.
+
+For these to hit target, each retail Vatika needs three things — adequate inventory, trained sales staff, and the systems + collaterals to empower them.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M02-who-we-are', 'সত্তা, দল এবং লক্ষ্য', 'कानूनी इकाई, टीम, और मिशन', 'Entity, team, and mission', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] KarmYog Vatika is the biophilic design business arm of KarmYog for the 21st Century (KY21C). Legal entity: NatureLink Education Network Private Limited (CIN U74999WB2011PTC167244). Website www.plantlibrary.net. Instagram @karmyogvatika.
+
+Three decades of institutional backbone in Kolkata. A growing national network of Vatikas — Kolkata, Patna, Newtown, Rosedale, IIT Kharagpur, and the Million Vatikas franchise expansion into West Bengal.
+
+The business has four layers: product (modular gardens), service (installations + maintenance), network (club membership + franchise), and platform (Vatika.AI digital demand engine).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] KarmYog Vatika is the biophilic design business arm of KarmYog for the 21st Century (KY21C). Legal entity: NatureLink Education Network Private Limited (CIN U74999WB2011PTC167244). Website www.plantlibrary.net. Instagram @karmyogvatika.
+
+Three decades of institutional backbone in Kolkata. A growing national network of Vatikas — Kolkata, Patna, Newtown, Rosedale, IIT Kharagpur, and the Million Vatikas franchise expansion into West Bengal.
+
+The business has four layers: product (modular gardens), service (installations + maintenance), network (club membership + franchise), and platform (Vatika.AI digital demand engine).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'KarmYog Vatika is the biophilic design business arm of KarmYog for the 21st Century (KY21C). Legal entity: NatureLink Education Network Private Limited (CIN U74999WB2011PTC167244). Website www.plantlibrary.net. Instagram @karmyogvatika.
+
+Three decades of institutional backbone in Kolkata. A growing national network of Vatikas — Kolkata, Patna, Newtown, Rosedale, IIT Kharagpur, and the Million Vatikas franchise expansion into West Bengal.
+
+The business has four layers: product (modular gardens), service (installations + maintenance), network (club membership + franchise), and platform (Vatika.AI digital demand engine).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M02-who-we-are', 'তুমি যাদের কাছে হস্তান্তর করবে', 'जिन्हें तुम हैंडओवर करोगे', 'The team you hand off to', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] MahAcharyaJi (Shri Sourabh J. Sarkar) — Founder. Mention in institutional pitches for credibility.
+Shrimati Reena J. Sarkar — Co-Founder & Operations, +91 98300 24611, reenajs@ky21c.org. She signs service agreements.
+Shri Ram Badrinathan — Co-Founder & Product/Tech, +91 91677 19898, ram@ky21c.org. Primary sales contact on large proposals.
+Shri Koushik Sarkar — Chief Business Officer, ex-CEO Saint-Gobain. Joins institutional partner calls.
+Smt. Panna Dhar — Head of Operations. Ops hand-off point.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] MahAcharyaJi (Shri Sourabh J. Sarkar) — Founder. Mention in institutional pitches for credibility.
+Shrimati Reena J. Sarkar — Co-Founder & Operations, +91 98300 24611, reenajs@ky21c.org. She signs service agreements.
+Shri Ram Badrinathan — Co-Founder & Product/Tech, +91 91677 19898, ram@ky21c.org. Primary sales contact on large proposals.
+Shri Koushik Sarkar — Chief Business Officer, ex-CEO Saint-Gobain. Joins institutional partner calls.
+Smt. Panna Dhar — Head of Operations. Ops hand-off point.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'MahAcharyaJi (Shri Sourabh J. Sarkar) — Founder. Mention in institutional pitches for credibility.
+Shrimati Reena J. Sarkar — Co-Founder & Operations, +91 98300 24611, reenajs@ky21c.org. She signs service agreements.
+Shri Ram Badrinathan — Co-Founder & Product/Tech, +91 91677 19898, ram@ky21c.org. Primary sales contact on large proposals.
+Shri Koushik Sarkar — Chief Business Officer, ex-CEO Saint-Gobain. Joins institutional partner calls.
+Smt. Panna Dhar — Head of Operations. Ops hand-off point.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M02-who-we-are', 'মূল মূল্যবোধ + চারটি স্বাস্থ্য স্তম্ভ', 'मूल मूल्य + चार स्वास्थ्य स्तंभ', 'Core values + four well-being pillars', 2) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Sanskrit anchor — प्रज्ञा कौशल साधना (Wisdom Skill Practice).
+Values: Nature (Prakriti), Learning (Shiksha), Community (Samudaya), Consciousness (Chetna), Service (Seva).
+Four well-being pillars (memorise — institutional pitches): Health · Wealth · Nature · Culture.
+A KarmYog Vatika is the single integrated place where urban communities access all four.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Sanskrit anchor — प्रज्ञा कौशल साधना (Wisdom Skill Practice).
+Values: Nature (Prakriti), Learning (Shiksha), Community (Samudaya), Consciousness (Chetna), Service (Seva).
+Four well-being pillars (memorise — institutional pitches): Health · Wealth · Nature · Culture.
+A KarmYog Vatika is the single integrated place where urban communities access all four.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Sanskrit anchor — प्रज्ञा कौशल साधना (Wisdom Skill Practice).
+Values: Nature (Prakriti), Learning (Shiksha), Community (Samudaya), Consciousness (Chetna), Service (Seva).
+Four well-being pillars (memorise — institutional pitches): Health · Wealth · Nature · Culture.
+A KarmYog Vatika is the single integrated place where urban communities access all four.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M03-what-we-sell', '১৬-মডিউল মূল্য তালিকা', '16-मॉड्यूल प्राइस कैटलॉग', 'The 16-module pricing catalogue (canonical)', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] 16 proprietary SKUs. 4 tiers each: No Light · +Light · +Plants · +Plants & Light.
+Sample flagships:
+Vertical Z Module 12/9/6: ₹5,200 / 5,600 / 6,200 / 6,779 (18 plants)
+Pine Box 6": ₹600 / 1,200 / 800 / 1,400 (3 plants)
+Vertical Two Connector Z: ₹10,500 / 12,400 / 13,500 (33 plants)
+Parapet 20 Bamboo (railing): ₹8,450 / 10,300 / 14,349 / 16,200 (38 plants)
+Wall Vertical Pine Mat: ₹5,150 / 7,500 / 6,050 / 8,400 (9 plants)
+
+Quoting rules: for proposals above ₹50K, quote TWO tiers (Silver/Gold). Default to +Plants. Lighting is the upsell — bundle inside Comfort/Gold, never as extra.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] 16 proprietary SKUs. 4 tiers each: No Light · +Light · +Plants · +Plants & Light.
+Sample flagships:
+Vertical Z Module 12/9/6: ₹5,200 / 5,600 / 6,200 / 6,779 (18 plants)
+Pine Box 6": ₹600 / 1,200 / 800 / 1,400 (3 plants)
+Vertical Two Connector Z: ₹10,500 / 12,400 / 13,500 (33 plants)
+Parapet 20 Bamboo (railing): ₹8,450 / 10,300 / 14,349 / 16,200 (38 plants)
+Wall Vertical Pine Mat: ₹5,150 / 7,500 / 6,050 / 8,400 (9 plants)
+
+Quoting rules: for proposals above ₹50K, quote TWO tiers (Silver/Gold). Default to +Plants. Lighting is the upsell — bundle inside Comfort/Gold, never as extra.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '16 proprietary SKUs. 4 tiers each: No Light · +Light · +Plants · +Plants & Light.
+Sample flagships:
+Vertical Z Module 12/9/6: ₹5,200 / 5,600 / 6,200 / 6,779 (18 plants)
+Pine Box 6": ₹600 / 1,200 / 800 / 1,400 (3 plants)
+Vertical Two Connector Z: ₹10,500 / 12,400 / 13,500 (33 plants)
+Parapet 20 Bamboo (railing): ₹8,450 / 10,300 / 14,349 / 16,200 (38 plants)
+Wall Vertical Pine Mat: ₹5,150 / 7,500 / 6,050 / 8,400 (9 plants)
+
+Quoting rules: for proposals above ₹50K, quote TWO tiers (Silver/Gold). Default to +Plants. Lighting is the upsell — bundle inside Comfort/Gold, never as extra.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M03-what-we-sell', '৬টি ফরম্যাট Micro → Mega', '6 फ़ॉर्मेट Micro → Mega', '6 formats Micro → Mega', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Micro 100 sqft (build ₹39K, monthly revenue ₹16K)
+Mini 250 sqft (₹57K, ₹28K/mo)
+Small 600 sqft (₹97K, ₹41K/mo)
+Medium 1200 sqft (₹1.7L, ₹87K/mo)
+Large 3000 sqft (₹3.5L, ₹1.46L/mo)
+Mega 7000 sqft (₹6.4L, ₹2.5L/mo)', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Micro 100 sqft (build ₹39K, monthly revenue ₹16K)
+Mini 250 sqft (₹57K, ₹28K/mo)
+Small 600 sqft (₹97K, ₹41K/mo)
+Medium 1200 sqft (₹1.7L, ₹87K/mo)
+Large 3000 sqft (₹3.5L, ₹1.46L/mo)
+Mega 7000 sqft (₹6.4L, ₹2.5L/mo)', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Micro 100 sqft (build ₹39K, monthly revenue ₹16K)
+Mini 250 sqft (₹57K, ₹28K/mo)
+Small 600 sqft (₹97K, ₹41K/mo)
+Medium 1200 sqft (₹1.7L, ₹87K/mo)
+Large 3000 sqft (₹3.5L, ₹1.46L/mo)
+Mega 7000 sqft (₹6.4L, ₹2.5L/mo)', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M03-what-we-sell', 'প্ল্যান্ট লাইব্রেরি + Greenri + Harshdeep', 'प्लांट लाइब्रेरी + Greenri + Harshdeep', 'Plant library + Greenri + Harshdeep', 2) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] 150+ species, Kolkata-climate-optimised. 15-day replacement guarantee + 30-day post-install care.
+
+Greenri (premium): 158 units, 45% margin. Harshdeep Hortico (ISO, 25-year Public Ltd): Aura ₹16,319–₹63,496 · Urn ₹15,045–₹37,553 · Coral ₹7,705–₹23,356.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] 150+ species, Kolkata-climate-optimised. 15-day replacement guarantee + 30-day post-install care.
+
+Greenri (premium): 158 units, 45% margin. Harshdeep Hortico (ISO, 25-year Public Ltd): Aura ₹16,319–₹63,496 · Urn ₹15,045–₹37,553 · Coral ₹7,705–₹23,356.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '150+ species, Kolkata-climate-optimised. 15-day replacement guarantee + 30-day post-install care.
+
+Greenri (premium): 158 units, 45% margin. Harshdeep Hortico (ISO, 25-year Public Ltd): Aura ₹16,319–₹63,496 · Urn ₹15,045–₹37,553 · Coral ₹7,705–₹23,356.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M04-club-ecosystem', 'তিনটি সদস্যপদ স্তর', 'तीन सदस्यता स्तर', 'Three membership tiers', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Family Membership (households) — home transformation + Academy + Plant Library + Green Gifts.
+Institutional Membership (schools, universities, corporates, societies, hospitals) — campus Vatika + stakeholder programming + CSR reporting + exhibit pavilions.
+Business Membership (entrepreneurs) — Master Franchisee ₹69L + 5% royalty.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Family Membership (households) — home transformation + Academy + Plant Library + Green Gifts.
+Institutional Membership (schools, universities, corporates, societies, hospitals) — campus Vatika + stakeholder programming + CSR reporting + exhibit pavilions.
+Business Membership (entrepreneurs) — Master Franchisee ₹69L + 5% royalty.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Family Membership (households) — home transformation + Academy + Plant Library + Green Gifts.
+Institutional Membership (schools, universities, corporates, societies, hospitals) — campus Vatika + stakeholder programming + CSR reporting + exhibit pavilions.
+Business Membership (entrepreneurs) — Master Franchisee ₹69L + 5% royalty.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M04-club-ecosystem', 'Adopt-a-Garden + GreenTelligence', 'Adopt-a-Garden + GreenTelligence', 'Adopt-a-Garden + GreenTelligence (Q.Rius + OmniDEL)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Adopt-a-Garden: KarmYog identifies unused spaces (rooftops, terraces, parks), runs fully-managed kitchen gardens, members sponsor seasonally, harvest-share. Pitch this at Month 3 of maintenance contracts — adds ₹25K–₹75K/season.
+
+GreenTelligence: Q.Rius smart stickers + OmniDEL app. Point phone at planter → ML identifies plant + question + guide → fetches curated answer. Plants become digital libraries.
+
+Plant Library: retail counter inside every Vatika (plants ₹150–800, Green Gifts, reference).
+Behtar Life Academy: tech-enabled learning inside the Vatika. Funded by donations + product revenue, NOT course fees.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Adopt-a-Garden: KarmYog identifies unused spaces (rooftops, terraces, parks), runs fully-managed kitchen gardens, members sponsor seasonally, harvest-share. Pitch this at Month 3 of maintenance contracts — adds ₹25K–₹75K/season.
+
+GreenTelligence: Q.Rius smart stickers + OmniDEL app. Point phone at planter → ML identifies plant + question + guide → fetches curated answer. Plants become digital libraries.
+
+Plant Library: retail counter inside every Vatika (plants ₹150–800, Green Gifts, reference).
+Behtar Life Academy: tech-enabled learning inside the Vatika. Funded by donations + product revenue, NOT course fees.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Adopt-a-Garden: KarmYog identifies unused spaces (rooftops, terraces, parks), runs fully-managed kitchen gardens, members sponsor seasonally, harvest-share. Pitch this at Month 3 of maintenance contracts — adds ₹25K–₹75K/season.
+
+GreenTelligence: Q.Rius smart stickers + OmniDEL app. Point phone at planter → ML identifies plant + question + guide → fetches curated answer. Plants become digital libraries.
+
+Plant Library: retail counter inside every Vatika (plants ₹150–800, Green Gifts, reference).
+Behtar Life Academy: tech-enabled learning inside the Vatika. Funded by donations + product revenue, NOT course fees.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M05-pricing-playbook', 'ইনস্টলেশন মূল্যের ব্যান্ড', 'इंस्टॉलेशन प्राइसिंग बैंड्स', 'Installation pricing bands', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Small residential 50-300 sqft: ₹50-300/sqft.
+Medium residential 300-1000 sqft: ₹150-600/sqft (Urvashi ₹2.61L at ₹340/sqft).
+Duplex modular 1000+ sqft: ₹100-200/sqft (Dipika Heights ₹96K-1.35L tiered).
+Flagship residential: ₹8L (Jhunjhunwala 17 zones).
+Commercial entrance: ~₹2.6L (Manish Kochar).
+Biophilic studio setup: ₹50L+ (SNU).
+Recurring studio ops: ₹24-50L/year (SNU).
+Biophilic cabin 3-tier (Walia): Economy ₹3.5L / Comfort ₹11L / Luxury ₹22L.
+Franchise venture: ₹2Cr (Sumiran).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Small residential 50-300 sqft: ₹50-300/sqft.
+Medium residential 300-1000 sqft: ₹150-600/sqft (Urvashi ₹2.61L at ₹340/sqft).
+Duplex modular 1000+ sqft: ₹100-200/sqft (Dipika Heights ₹96K-1.35L tiered).
+Flagship residential: ₹8L (Jhunjhunwala 17 zones).
+Commercial entrance: ~₹2.6L (Manish Kochar).
+Biophilic studio setup: ₹50L+ (SNU).
+Recurring studio ops: ₹24-50L/year (SNU).
+Biophilic cabin 3-tier (Walia): Economy ₹3.5L / Comfort ₹11L / Luxury ₹22L.
+Franchise venture: ₹2Cr (Sumiran).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Small residential 50-300 sqft: ₹50-300/sqft.
+Medium residential 300-1000 sqft: ₹150-600/sqft (Urvashi ₹2.61L at ₹340/sqft).
+Duplex modular 1000+ sqft: ₹100-200/sqft (Dipika Heights ₹96K-1.35L tiered).
+Flagship residential: ₹8L (Jhunjhunwala 17 zones).
+Commercial entrance: ~₹2.6L (Manish Kochar).
+Biophilic studio setup: ₹50L+ (SNU).
+Recurring studio ops: ₹24-50L/year (SNU).
+Biophilic cabin 3-tier (Walia): Economy ₹3.5L / Comfort ₹11L / Luxury ₹22L.
+Franchise venture: ₹2Cr (Sumiran).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M05-pricing-playbook', 'রক্ষণাবেক্ষণ মূল্যের নিয়ম', 'रखरखाव के नियम', 'Maintenance pricing rules (memorise)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Office anchor: ₹100/plant/month (TMIL 120 plants × ₹100 = ₹12K/mo, 19+ months straight).
+HNW residential: 1.5-2× office = ₹160-200/plant/month.
+Premium ceiling: Mishra Ji ₹26,000/mo.
+Institutional campus: ₹25,000+/mo (CII SNCEL 9 months flat).
+Floor: Dr Kochgaway ₹1,500/mo.
+
+Upsell: Month 3 quote biophilic arch (₹40-50K, CII SNCEL precedent ₹47,780). Month 6 quote landscaping (₹1.5-2L). Year 1 pitch Adopt-a-Garden.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Office anchor: ₹100/plant/month (TMIL 120 plants × ₹100 = ₹12K/mo, 19+ months straight).
+HNW residential: 1.5-2× office = ₹160-200/plant/month.
+Premium ceiling: Mishra Ji ₹26,000/mo.
+Institutional campus: ₹25,000+/mo (CII SNCEL 9 months flat).
+Floor: Dr Kochgaway ₹1,500/mo.
+
+Upsell: Month 3 quote biophilic arch (₹40-50K, CII SNCEL precedent ₹47,780). Month 6 quote landscaping (₹1.5-2L). Year 1 pitch Adopt-a-Garden.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Office anchor: ₹100/plant/month (TMIL 120 plants × ₹100 = ₹12K/mo, 19+ months straight).
+HNW residential: 1.5-2× office = ₹160-200/plant/month.
+Premium ceiling: Mishra Ji ₹26,000/mo.
+Institutional campus: ₹25,000+/mo (CII SNCEL 9 months flat).
+Floor: Dr Kochgaway ₹1,500/mo.
+
+Upsell: Month 3 quote biophilic arch (₹40-50K, CII SNCEL precedent ₹47,780). Month 6 quote landscaping (₹1.5-2L). Year 1 pitch Adopt-a-Garden.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M06-vatika-ai', 'তিনটি পণ্য, একটি প্ল্যাটফর্ম', 'तीन प्रोडक्ट, एक प्लेटफ़ॉर्म', 'Three products, one platform', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Vatika Studio (vatika-studio.vercel.app) — full AI design platform. Upload photo → pick budget → AI render with real products → quotation → WhatsApp order.
+Vatika Ankita (vatika-ankita.vercel.app) — client-facing visualiser for Meta ad traffic, Kolkata-first.
+Vatika Ankit (planned) — next iteration.
+
+Stack: Next.js 16 + Gemini 2.0 Flash + Replicate Flux fallback + Supabase. 61 planters (15 KarmYog + 46 Ugaoo), 13 plant species, 3 budget tiers.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Vatika Studio (vatika-studio.vercel.app) — full AI design platform. Upload photo → pick budget → AI render with real products → quotation → WhatsApp order.
+Vatika Ankita (vatika-ankita.vercel.app) — client-facing visualiser for Meta ad traffic, Kolkata-first.
+Vatika Ankit (planned) — next iteration.
+
+Stack: Next.js 16 + Gemini 2.0 Flash + Replicate Flux fallback + Supabase. 61 planters (15 KarmYog + 46 Ugaoo), 13 plant species, 3 budget tiers.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Vatika Studio (vatika-studio.vercel.app) — full AI design platform. Upload photo → pick budget → AI render with real products → quotation → WhatsApp order.
+Vatika Ankita (vatika-ankita.vercel.app) — client-facing visualiser for Meta ad traffic, Kolkata-first.
+Vatika Ankit (planned) — next iteration.
+
+Stack: Next.js 16 + Gemini 2.0 Flash + Replicate Flux fallback + Supabase. 61 planters (15 KarmYog + 46 Ugaoo), 13 plant species, 3 budget tiers.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M06-vatika-ai', 'Delivery-timeline slider-ই ব্যবসার মডেল', 'Delivery-timeline slider ही बिज़नेस मॉडल है', 'The delivery-timeline slider IS the business model', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Every day a customer waits eliminates one retail intermediary.
+T1 Express 1-2d: 0% off, platform fee 36%. Traditional retail.
+T4 Factory 30d: 30% off customer, platform fee 23%. Retailer+warehouse+distributor gone.
+T5 Manufacturer Direct 45+d: 50% off customer, fee 9.1%. All 4 intermediaries eliminated.
+
+The math: ₹50K MRP → manufacturer traditional ₹7,500 (15%). Vatika T4 ₹35K → manufacturer ₹12,000 (34%). Manufacturer earns 60% MORE at 30% discount to customer.
+
+Seed round ₹4.5Cr at ₹22.5Cr post-money, 20% dilution. Kolkata thesis: 6.32% rental yield (highest in India), 40-60K target premium apartments.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Every day a customer waits eliminates one retail intermediary.
+T1 Express 1-2d: 0% off, platform fee 36%. Traditional retail.
+T4 Factory 30d: 30% off customer, platform fee 23%. Retailer+warehouse+distributor gone.
+T5 Manufacturer Direct 45+d: 50% off customer, fee 9.1%. All 4 intermediaries eliminated.
+
+The math: ₹50K MRP → manufacturer traditional ₹7,500 (15%). Vatika T4 ₹35K → manufacturer ₹12,000 (34%). Manufacturer earns 60% MORE at 30% discount to customer.
+
+Seed round ₹4.5Cr at ₹22.5Cr post-money, 20% dilution. Kolkata thesis: 6.32% rental yield (highest in India), 40-60K target premium apartments.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Every day a customer waits eliminates one retail intermediary.
+T1 Express 1-2d: 0% off, platform fee 36%. Traditional retail.
+T4 Factory 30d: 30% off customer, platform fee 23%. Retailer+warehouse+distributor gone.
+T5 Manufacturer Direct 45+d: 50% off customer, fee 9.1%. All 4 intermediaries eliminated.
+
+The math: ₹50K MRP → manufacturer traditional ₹7,500 (15%). Vatika T4 ₹35K → manufacturer ₹12,000 (34%). Manufacturer earns 60% MORE at 30% discount to customer.
+
+Seed round ₹4.5Cr at ₹22.5Cr post-money, 20% dilution. Kolkata thesis: 6.32% rental yield (highest in India), 40-60K target premium apartments.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M07-proposal-writing', 'Gamma + Canva কর্মপ্রবাহ', 'Gamma + Canva वर्कफ़्लो', 'Gamma + Canva workflow', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] 1. Brief PPT — locked text + placeholder images.
+2. Upload to Gamma with master prompt → beautiful layout.
+3. Export PDF.
+4. Import to Canva.
+5. Magic Grab — swap AI art for real product images (Brand Assets/, Plants/, Modules/).
+6. Export final PDF + PPT.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] 1. Brief PPT — locked text + placeholder images.
+2. Upload to Gamma with master prompt → beautiful layout.
+3. Export PDF.
+4. Import to Canva.
+5. Magic Grab — swap AI art for real product images (Brand Assets/, Plants/, Modules/).
+6. Export final PDF + PPT.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '1. Brief PPT — locked text + placeholder images.
+2. Upload to Gamma with master prompt → beautiful layout.
+3. Export PDF.
+4. Import to Canva.
+5. Magic Grab — swap AI art for real product images (Brand Assets/, Plants/, Modules/).
+6. Export final PDF + PPT.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M07-proposal-writing', 'PET + বাণিজ্যিক শর্তাবলী', 'PET + कमर्शियल शर्तें', 'PET + commercial terms (50/40/10)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Price Estimate Table (every proposal, every time):
+1. Scope · 2. Bill of Materials · 3. Plant Schedule · 4. Planter Schedule · 5. Installation Plan · 6. Post-Installation Support (30-day) · 7. T&C.
+
+50% advance on confirmation. 40% before dispatch. 10% on install. 30-day validity.
+ICICI A/c 000605501516 · IFSC ICIC0000006.
+
+Non-standard splits observed (both approved by Ram): Dipika 60/40, Urvashi 50/25/25. Check with Ram before agreeing.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Price Estimate Table (every proposal, every time):
+1. Scope · 2. Bill of Materials · 3. Plant Schedule · 4. Planter Schedule · 5. Installation Plan · 6. Post-Installation Support (30-day) · 7. T&C.
+
+50% advance on confirmation. 40% before dispatch. 10% on install. 30-day validity.
+ICICI A/c 000605501516 · IFSC ICIC0000006.
+
+Non-standard splits observed (both approved by Ram): Dipika 60/40, Urvashi 50/25/25. Check with Ram before agreeing.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Price Estimate Table (every proposal, every time):
+1. Scope · 2. Bill of Materials · 3. Plant Schedule · 4. Planter Schedule · 5. Installation Plan · 6. Post-Installation Support (30-day) · 7. T&C.
+
+50% advance on confirmation. 40% before dispatch. 10% on install. 30-day validity.
+ICICI A/c 000605501516 · IFSC ICIC0000006.
+
+Non-standard splits observed (both approved by Ram): Dipika 60/40, Urvashi 50/25/25. Check with Ram before agreeing.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M08-sales-cycle', 'চ্যানেল অনুযায়ী তিনটি চক্র', 'चैनल के अनुसार तीन साइकल', 'Three cycles by channel', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Residential 2-3 months: lead → 7d site visit → 14d PET → Silver/Gold tier → 50% advance → install 3-7d small / 2-3 weeks duplex → 30-day support.
+
+Institutional 4-6 months: lead → first meeting (MahAcharyaJi + Ram) → stakeholder mapping → concept + IIT KGP proof → 2-4 iterations → UNLOCK MOVE = visit IIT KGP Research Park → quotation.
+
+Franchise 6-12 months: entrepreneur conversation → founder''s essay (Sumiran template) → mutual diligence → LLP + capital → PoC event → scaling.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Residential 2-3 months: lead → 7d site visit → 14d PET → Silver/Gold tier → 50% advance → install 3-7d small / 2-3 weeks duplex → 30-day support.
+
+Institutional 4-6 months: lead → first meeting (MahAcharyaJi + Ram) → stakeholder mapping → concept + IIT KGP proof → 2-4 iterations → UNLOCK MOVE = visit IIT KGP Research Park → quotation.
+
+Franchise 6-12 months: entrepreneur conversation → founder''s essay (Sumiran template) → mutual diligence → LLP + capital → PoC event → scaling.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Residential 2-3 months: lead → 7d site visit → 14d PET → Silver/Gold tier → 50% advance → install 3-7d small / 2-3 weeks duplex → 30-day support.
+
+Institutional 4-6 months: lead → first meeting (MahAcharyaJi + Ram) → stakeholder mapping → concept + IIT KGP proof → 2-4 iterations → UNLOCK MOVE = visit IIT KGP Research Park → quotation.
+
+Franchise 6-12 months: entrepreneur conversation → founder''s essay (Sumiran template) → mutual diligence → LLP + capital → PoC event → scaling.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M08-sales-cycle', 'BharatBuild প্যাটার্ন', 'BharatBuild पैटर्न', 'The BharatBuild pattern (7 iterations)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] BharatBuild ran 7 proposal iterations over 3 months. Don''t panic on revision 3, 4, 5. Iteration = buying signal. Each version: preserve what they said yes to, surgically address the objection, show revision log, hold the price floor (pull a tier, never cut a rate).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] BharatBuild ran 7 proposal iterations over 3 months. Don''t panic on revision 3, 4, 5. Iteration = buying signal. Each version: preserve what they said yes to, surgically address the objection, show revision log, hold the price floor (pull a tier, never cut a rate).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'BharatBuild ran 7 proposal iterations over 3 months. Don''t panic on revision 3, 4, 5. Iteration = buying signal. Each version: preserve what they said yes to, surgically address the objection, show revision log, hold the price floor (pull a tier, never cut a rate).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M09-case-studies', 'নয়টি উদাহরণ চুক্তি', 'नौ उदाहरण सौदे', 'Nine exemplar deals', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] 1. Jhunjhunwala ₹8L won — Atmosphere Topsia duplex, 63 planters × 17 zones. Flagship residential.
+2. Urvashi Arora ₹2.61L won — Downtown 3, 768 sqft, 50/25/25 payment, 5-week close. Cleanest deal.
+3. Dipika Heights ₹96K-1.35L won — Silver/Gold tiered template.
+4. Sister Nivedita University ₹24-50L/yr pending — recurring institutional.
+5. Sumiran Foundation MP ₹2Cr pending — franchise venture, 6 formats, 300 Phase-2.
+6. IIT KGP Museum of the Future Pavilion — Sept 2025 Durga Puja pilot, 100,000+ visitors + 3M social impressions in ONE week. Oct 2025 proposal to make permanent.
+7. Walia Ergo Tower — Biophilic River (Gangotri→Ganga Sagar narrative) + Cabin 3-tier ₹3.5L-22L + Trellis ₹4.85L.
+8. Mishra Ji ₹26,000/month — premium maintenance ceiling, ongoing since Oct 2024.
+9. Army Institute of Management Newtown — football field renovation multi-phase infrastructure project. Proves we do field-scale work.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] 1. Jhunjhunwala ₹8L won — Atmosphere Topsia duplex, 63 planters × 17 zones. Flagship residential.
+2. Urvashi Arora ₹2.61L won — Downtown 3, 768 sqft, 50/25/25 payment, 5-week close. Cleanest deal.
+3. Dipika Heights ₹96K-1.35L won — Silver/Gold tiered template.
+4. Sister Nivedita University ₹24-50L/yr pending — recurring institutional.
+5. Sumiran Foundation MP ₹2Cr pending — franchise venture, 6 formats, 300 Phase-2.
+6. IIT KGP Museum of the Future Pavilion — Sept 2025 Durga Puja pilot, 100,000+ visitors + 3M social impressions in ONE week. Oct 2025 proposal to make permanent.
+7. Walia Ergo Tower — Biophilic River (Gangotri→Ganga Sagar narrative) + Cabin 3-tier ₹3.5L-22L + Trellis ₹4.85L.
+8. Mishra Ji ₹26,000/month — premium maintenance ceiling, ongoing since Oct 2024.
+9. Army Institute of Management Newtown — football field renovation multi-phase infrastructure project. Proves we do field-scale work.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '1. Jhunjhunwala ₹8L won — Atmosphere Topsia duplex, 63 planters × 17 zones. Flagship residential.
+2. Urvashi Arora ₹2.61L won — Downtown 3, 768 sqft, 50/25/25 payment, 5-week close. Cleanest deal.
+3. Dipika Heights ₹96K-1.35L won — Silver/Gold tiered template.
+4. Sister Nivedita University ₹24-50L/yr pending — recurring institutional.
+5. Sumiran Foundation MP ₹2Cr pending — franchise venture, 6 formats, 300 Phase-2.
+6. IIT KGP Museum of the Future Pavilion — Sept 2025 Durga Puja pilot, 100,000+ visitors + 3M social impressions in ONE week. Oct 2025 proposal to make permanent.
+7. Walia Ergo Tower — Biophilic River (Gangotri→Ganga Sagar narrative) + Cabin 3-tier ₹3.5L-22L + Trellis ₹4.85L.
+8. Mishra Ji ₹26,000/month — premium maintenance ceiling, ongoing since Oct 2024.
+9. Army Institute of Management Newtown — football field renovation multi-phase infrastructure project. Proves we do field-scale work.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M10-maintenance', 'রক্ষণাবেক্ষণ পণ্য (৪ স্তর)', 'रखरखाव प्रोडक्ट (4 स्तर)', 'The maintenance product (4 tiers)', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Tier 1 Small <₹5K/mo: site upkeep, minimal plants, monthly visit (Dr Kochgaway ₹1,500).
+Tier 2 Office ₹5-15K/mo: 100-150 plants, rotation, monthly visit (TMIL ₹12,000 = 120 plants at ₹100/plant/mo).
+Tier 3 HNW Residential ₹15-26K/mo: weekly visits, styling, replacements (Karnani ₹16K, Mishra Ji ₹26K).
+Tier 4 Institutional ₹25K+/mo: multi-zone campus (CII SNCEL ₹25K flat 9 months).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Tier 1 Small <₹5K/mo: site upkeep, minimal plants, monthly visit (Dr Kochgaway ₹1,500).
+Tier 2 Office ₹5-15K/mo: 100-150 plants, rotation, monthly visit (TMIL ₹12,000 = 120 plants at ₹100/plant/mo).
+Tier 3 HNW Residential ₹15-26K/mo: weekly visits, styling, replacements (Karnani ₹16K, Mishra Ji ₹26K).
+Tier 4 Institutional ₹25K+/mo: multi-zone campus (CII SNCEL ₹25K flat 9 months).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Tier 1 Small <₹5K/mo: site upkeep, minimal plants, monthly visit (Dr Kochgaway ₹1,500).
+Tier 2 Office ₹5-15K/mo: 100-150 plants, rotation, monthly visit (TMIL ₹12,000 = 120 plants at ₹100/plant/mo).
+Tier 3 HNW Residential ₹15-26K/mo: weekly visits, styling, replacements (Karnani ₹16K, Mishra Ji ₹26K).
+Tier 4 Institutional ₹25K+/mo: multi-zone campus (CII SNCEL ₹25K flat 9 months).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M10-maintenance', 'আপসেল প্লেবুক', 'अपसेल प्लेबुक', 'Upsell playbook (every retainer is a lead)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Month 3: biophilic arch/feature install ₹40-50K one-time (CII SNCEL precedent ₹47,780 on top of ₹25K/mo retainer).
+Month 6: landscaping project ₹1.5-2L (CII SNCEL 4-month project ₹1.8L, 50% advance).
+Month 12: expand scope — add plants, zones, other buildings.
+Year 1: pitch Adopt-a-Garden as next seasonal commitment.
+
+Monthly billing, Net 15. Invoice format KYV_YYYY_SEQUENCE. 2 missed months → pause service, escalate to Panna.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Month 3: biophilic arch/feature install ₹40-50K one-time (CII SNCEL precedent ₹47,780 on top of ₹25K/mo retainer).
+Month 6: landscaping project ₹1.5-2L (CII SNCEL 4-month project ₹1.8L, 50% advance).
+Month 12: expand scope — add plants, zones, other buildings.
+Year 1: pitch Adopt-a-Garden as next seasonal commitment.
+
+Monthly billing, Net 15. Invoice format KYV_YYYY_SEQUENCE. 2 missed months → pause service, escalate to Panna.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Month 3: biophilic arch/feature install ₹40-50K one-time (CII SNCEL precedent ₹47,780 on top of ₹25K/mo retainer).
+Month 6: landscaping project ₹1.5-2L (CII SNCEL 4-month project ₹1.8L, 50% advance).
+Month 12: expand scope — add plants, zones, other buildings.
+Year 1: pitch Adopt-a-Garden as next seasonal commitment.
+
+Monthly billing, Net 15. Invoice format KYV_YYYY_SEQUENCE. 2 missed months → pause service, escalate to Panna.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M11-master-franchisee', '৬-ফরম্যাট ইউনিট সিঁড়ি', '6-फ़ॉर्मेट यूनिट सीढ़ी', '6-format unit ladder', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Single-unit economics (from CashFlow9MthMasterFranchisee.xlsx):
+Micro 100sqft: build ₹39,164 · monthly ops ₹12,744 · monthly revenue ₹16,433 · break-even 29mo.
+Mini 250sqft: ₹56,968 · ₹20,652 · ₹28,650 · 24mo.
+Small 600sqft: ₹96,599 · ₹31,728 · ₹41,356 · 28mo.
+Medium 1,200sqft: ₹1.71L · ₹49,146 · ₹87,053 · 24mo.
+Large 3,000sqft: ₹3.46L · ₹78,436 · ₹1.46L · 28mo.
+Mega 7,000sqft: ₹6.44L · ₹1.28L · ₹2.53L · 1-2 years.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Single-unit economics (from CashFlow9MthMasterFranchisee.xlsx):
+Micro 100sqft: build ₹39,164 · monthly ops ₹12,744 · monthly revenue ₹16,433 · break-even 29mo.
+Mini 250sqft: ₹56,968 · ₹20,652 · ₹28,650 · 24mo.
+Small 600sqft: ₹96,599 · ₹31,728 · ₹41,356 · 28mo.
+Medium 1,200sqft: ₹1.71L · ₹49,146 · ₹87,053 · 24mo.
+Large 3,000sqft: ₹3.46L · ₹78,436 · ₹1.46L · 28mo.
+Mega 7,000sqft: ₹6.44L · ₹1.28L · ₹2.53L · 1-2 years.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Single-unit economics (from CashFlow9MthMasterFranchisee.xlsx):
+Micro 100sqft: build ₹39,164 · monthly ops ₹12,744 · monthly revenue ₹16,433 · break-even 29mo.
+Mini 250sqft: ₹56,968 · ₹20,652 · ₹28,650 · 24mo.
+Small 600sqft: ₹96,599 · ₹31,728 · ₹41,356 · 28mo.
+Medium 1,200sqft: ₹1.71L · ₹49,146 · ₹87,053 · 24mo.
+Large 3,000sqft: ₹3.46L · ₹78,436 · ₹1.46L · 28mo.
+Mega 7,000sqft: ₹6.44L · ₹1.28L · ₹2.53L · 1-2 years.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M11-master-franchisee', 'মাস্টার ফ্র্যাঞ্চাইজি অর্থনীতি', 'मास्टर फ्रेंचाइज़ी अर्थशास्त्र', 'Master Franchisee economics (geography-level)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] ₹69 lakh one-time upfront per geography.
+5% recurring royalty on franchisee unit sales + setup fees.
+Geography-exclusive territory rights.
+6-unit demo network cumulative ₹1.35Cr.
+Y1 annual network revenue ₹1.85Cr.
+5-year network target: 268 units per geography.
+5-year MF cumulative profit ₹3.15+ Cr.
+300+ livelihoods per geography.
+Avg franchisee break-even 24-29 months.
+
+Flagship precedent: Sumiran Ecological Foundation, Barkheda MP. Reena''s founder essay is the vision template.
+
+MF calls go to Ram + MahAcharyaJi + Koushik.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] ₹69 lakh one-time upfront per geography.
+5% recurring royalty on franchisee unit sales + setup fees.
+Geography-exclusive territory rights.
+6-unit demo network cumulative ₹1.35Cr.
+Y1 annual network revenue ₹1.85Cr.
+5-year network target: 268 units per geography.
+5-year MF cumulative profit ₹3.15+ Cr.
+300+ livelihoods per geography.
+Avg franchisee break-even 24-29 months.
+
+Flagship precedent: Sumiran Ecological Foundation, Barkheda MP. Reena''s founder essay is the vision template.
+
+MF calls go to Ram + MahAcharyaJi + Koushik.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '₹69 lakh one-time upfront per geography.
+5% recurring royalty on franchisee unit sales + setup fees.
+Geography-exclusive territory rights.
+6-unit demo network cumulative ₹1.35Cr.
+Y1 annual network revenue ₹1.85Cr.
+5-year network target: 268 units per geography.
+5-year MF cumulative profit ₹3.15+ Cr.
+300+ livelihoods per geography.
+Avg franchisee break-even 24-29 months.
+
+Flagship precedent: Sumiran Ecological Foundation, Barkheda MP. Reena''s founder essay is the vision template.
+
+MF calls go to Ram + MahAcharyaJi + Koushik.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M12-behtar-life-shop', 'Cowpathy — গো-ভিত্তিক সুস্থতা', 'Cowpathy — गाय आधारित सेहत', 'Cowpathy — cow-based wellness', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Natural Ayurvedic personal care from cow-milk derivatives. Soaps (multi-variant), shampoos, face & body cosmetics, seasonal specials. Bundle ~₹3,000. Integration order ~₹9,103 baseline.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Natural Ayurvedic personal care from cow-milk derivatives. Soaps (multi-variant), shampoos, face & body cosmetics, seasonal specials. Bundle ~₹3,000. Integration order ~₹9,103 baseline.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Natural Ayurvedic personal care from cow-milk derivatives. Soaps (multi-variant), shampoos, face & body cosmetics, seasonal specials. Bundle ~₹3,000. Integration order ~₹9,103 baseline.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M12-behtar-life-shop', 'Deshaj — বাংলার হস্তশিল্প', 'Deshaj — बंगाल का हस्तशिल्प', 'Deshaj — Bengal artisanal (22 SKUs)', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Honeys: Sundarban, Eucalyptus, Litchi, Mustard, Neem, Tulsi, Multi-Floral — 500g ₹419 / 250g ₹229. Ghee 350g ₹450 / 150g ₹180. Spices: Turmeric 200g ₹110 / 100g ₹45. Red Chilli 200g ₹190 / 100g ₹80. Cumin 200g ₹149. Coriander 200g ~₹140. Soaps (in production): Neem+Turmeric+Clove, Charcoal+Neem+Basil, Aloe+Moringa, Cucumber+Honey — 75g ₹130-145.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Honeys: Sundarban, Eucalyptus, Litchi, Mustard, Neem, Tulsi, Multi-Floral — 500g ₹419 / 250g ₹229. Ghee 350g ₹450 / 150g ₹180. Spices: Turmeric 200g ₹110 / 100g ₹45. Red Chilli 200g ₹190 / 100g ₹80. Cumin 200g ₹149. Coriander 200g ~₹140. Soaps (in production): Neem+Turmeric+Clove, Charcoal+Neem+Basil, Aloe+Moringa, Cucumber+Honey — 75g ₹130-145.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Honeys: Sundarban, Eucalyptus, Litchi, Mustard, Neem, Tulsi, Multi-Floral — 500g ₹419 / 250g ₹229. Ghee 350g ₹450 / 150g ₹180. Spices: Turmeric 200g ₹110 / 100g ₹45. Red Chilli 200g ₹190 / 100g ₹80. Cumin 200g ₹149. Coriander 200g ~₹140. Soaps (in production): Neem+Turmeric+Clove, Charcoal+Neem+Basil, Aloe+Moringa, Cucumber+Honey — 75g ₹130-145.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M12-behtar-life-shop', 'দোকানে বিক্রয়ের কৌশল', 'दुकान में सेल्स की चाल', 'The sales move inside Behtar Life Shop', 2) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Every walk-in is a multi-product conversation:
+Entry via plant or gift → upsell to module → nudge to membership → capture for Adopt-a-Garden.
+A single family visit can touch ₹500 retail + ₹25,000 module + ₹5,000 annual membership = the Vatika compounding at scale.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Every walk-in is a multi-product conversation:
+Entry via plant or gift → upsell to module → nudge to membership → capture for Adopt-a-Garden.
+A single family visit can touch ₹500 retail + ₹25,000 module + ₹5,000 annual membership = the Vatika compounding at scale.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Every walk-in is a multi-product conversation:
+Entry via plant or gift → upsell to module → nudge to membership → capture for Adopt-a-Garden.
+A single family visit can touch ₹500 retail + ₹25,000 module + ₹5,000 annual membership = the Vatika compounding at scale.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M13-channel-partners', 'পরিচালক ও সঞ্চালক', 'परिचालक और संचालक', 'Parichalak & Sanchalak', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Parichalak = lead partner (owns client relationship).
+Sanchalak = sub-partner feeding leads into Parichalak (shares from Parichalak''s commission, negotiated privately).
+
+Compensation: ₹8-12K fixed per sale + 1-1.5% variable.
+₹1L sale → ~9% · ₹5L → ~3.4% · ₹25L → ~1.7% · ₹1Cr → ~1.5%.
+Range: 5.29-15.50%.
+
+Ideal recruits: architects, interior designers, landscape contractors, hospitality consultants, real-estate brokers, event managers.
+
+Onboarding: NDA → playbook access → first lead with Ram co-pitching → first close → commission 30d after full client payment.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Parichalak = lead partner (owns client relationship).
+Sanchalak = sub-partner feeding leads into Parichalak (shares from Parichalak''s commission, negotiated privately).
+
+Compensation: ₹8-12K fixed per sale + 1-1.5% variable.
+₹1L sale → ~9% · ₹5L → ~3.4% · ₹25L → ~1.7% · ₹1Cr → ~1.5%.
+Range: 5.29-15.50%.
+
+Ideal recruits: architects, interior designers, landscape contractors, hospitality consultants, real-estate brokers, event managers.
+
+Onboarding: NDA → playbook access → first lead with Ram co-pitching → first close → commission 30d after full client payment.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Parichalak = lead partner (owns client relationship).
+Sanchalak = sub-partner feeding leads into Parichalak (shares from Parichalak''s commission, negotiated privately).
+
+Compensation: ₹8-12K fixed per sale + 1-1.5% variable.
+₹1L sale → ~9% · ₹5L → ~3.4% · ₹25L → ~1.7% · ₹1Cr → ~1.5%.
+Range: 5.29-15.50%.
+
+Ideal recruits: architects, interior designers, landscape contractors, hospitality consultants, real-estate brokers, event managers.
+
+Onboarding: NDA → playbook access → first lead with Ram co-pitching → first close → commission 30d after full client payment.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M14-objection-handling', 'শীর্ষ ৮টি আপত্তি', 'शीर्ष 8 आपत्तियाँ', 'Top 8 objections + scripts', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] "Too expensive" → pull out a lower tier. "Silver gives 70% sanctuary for 55% cost." (Dipika precedent.)
+"Nursery is cheaper" → "You can. But no 15-day replacement, no 30-day support, no Harshdeep planters, no install team. We are not in the plant business. We are in the sanctuary business."
+"Show me what you''ve built" → match scale. Residential → Jhunjhunwala or Dipika. Institutional → IIT KGP or AIM. Franchise → Sumiran.
+"I need to think" → "Of course. PET + Silver/Gold in 10 min. Site visit next week."
+"Spouse/board needs to approve" → ask who. Offer 20-min direct call or site visit.
+"Plants will die" → "30-day support. Post that, ₹[tier from M10]. TMIL = 120 plants healthy 19 months straight."
+"Timeline too long" → "Let me overlap phases. Revised schedule tomorrow."
+"60/40 instead of 50/40/10" → "Dipika did 60/40. Let me confirm with Reena, 24 hours." NEVER on the spot.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] "Too expensive" → pull out a lower tier. "Silver gives 70% sanctuary for 55% cost." (Dipika precedent.)
+"Nursery is cheaper" → "You can. But no 15-day replacement, no 30-day support, no Harshdeep planters, no install team. We are not in the plant business. We are in the sanctuary business."
+"Show me what you''ve built" → match scale. Residential → Jhunjhunwala or Dipika. Institutional → IIT KGP or AIM. Franchise → Sumiran.
+"I need to think" → "Of course. PET + Silver/Gold in 10 min. Site visit next week."
+"Spouse/board needs to approve" → ask who. Offer 20-min direct call or site visit.
+"Plants will die" → "30-day support. Post that, ₹[tier from M10]. TMIL = 120 plants healthy 19 months straight."
+"Timeline too long" → "Let me overlap phases. Revised schedule tomorrow."
+"60/40 instead of 50/40/10" → "Dipika did 60/40. Let me confirm with Reena, 24 hours." NEVER on the spot.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '"Too expensive" → pull out a lower tier. "Silver gives 70% sanctuary for 55% cost." (Dipika precedent.)
+"Nursery is cheaper" → "You can. But no 15-day replacement, no 30-day support, no Harshdeep planters, no install team. We are not in the plant business. We are in the sanctuary business."
+"Show me what you''ve built" → match scale. Residential → Jhunjhunwala or Dipika. Institutional → IIT KGP or AIM. Franchise → Sumiran.
+"I need to think" → "Of course. PET + Silver/Gold in 10 min. Site visit next week."
+"Spouse/board needs to approve" → ask who. Offer 20-min direct call or site visit.
+"Plants will die" → "30-day support. Post that, ₹[tier from M10]. TMIL = 120 plants healthy 19 months straight."
+"Timeline too long" → "Let me overlap phases. Revised schedule tomorrow."
+"60/40 instead of 50/40/10" → "Dipika did 60/40. Let me confirm with Reena, 24 hours." NEVER on the spot.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M14-objection-handling', 'ডিল হারানোর শব্দ', 'डील खोने वाले शब्द', 'Words that kill deals', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] "Budget option" → say "Silver tier".
+"Cheap" → say "entry-level".
+"Luxury" → say "bespoke".
+"Deal/discount" → say "seasonal offer".
+"We''ll try" → say "we will".
+"I think so" → say "I will confirm by [date]".', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] "Budget option" → say "Silver tier".
+"Cheap" → say "entry-level".
+"Luxury" → say "bespoke".
+"Deal/discount" → say "seasonal offer".
+"We''ll try" → say "we will".
+"I think so" → say "I will confirm by [date]".', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '"Budget option" → say "Silver tier".
+"Cheap" → say "entry-level".
+"Luxury" → say "bespoke".
+"Deal/discount" → say "seasonal offer".
+"We''ll try" → say "we will".
+"I think so" → say "I will confirm by [date]".', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M15-video-library', '৫টি ভিডিও কীভাবে ব্যবহার করবে', '5 वीडियो का उपयोग', 'How to use the 5 videos', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Week 1 Day 1: watch all 5 in order, one sitting (~45-60 min).
+Before your first client pitch: re-watch Videos 1 and 2.
+Before your first site visit: re-watch Video 3 (critical segment from 5:24).
+Before your first PET: re-watch Video 5 (critical segment from 0:28).
+Video 1 is also embedded in M00 Welcome for first-encounter context.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Week 1 Day 1: watch all 5 in order, one sitting (~45-60 min).
+Before your first client pitch: re-watch Videos 1 and 2.
+Before your first site visit: re-watch Video 3 (critical segment from 5:24).
+Before your first PET: re-watch Video 5 (critical segment from 0:28).
+Video 1 is also embedded in M00 Welcome for first-encounter context.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Week 1 Day 1: watch all 5 in order, one sitting (~45-60 min).
+Before your first client pitch: re-watch Videos 1 and 2.
+Before your first site visit: re-watch Video 3 (critical segment from 5:24).
+Before your first PET: re-watch Video 5 (critical segment from 0:28).
+Video 1 is also embedded in M00 Welcome for first-encounter context.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M16-ops-handover', '৮-ধাপ ইনস্টল প্রক্রিয়া', '8-चरण इंस्टॉल प्रक्रिया', '8-phase install process (58-day residential)', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Day 0 Site visit + measurement (Sales + designer).
+Day 1-14 Concept + PET (Sales + Gamma/Canva). 50% advance trigger.
+Day 14-21 Procurement (Panna + team). Greenri + Harshdeep + local orders.
+Day 21-22 Site prep.
+Day 23-28 Install (team 2-4 people). Residential 3-5d · Duplex 1 week · Institutional 2-3 weeks.
+Day 28 Handover (Sales + Panna). 40% paid, walkthrough, care manual.
+Day 29-58 30-day support. 2 visits, photo documentation.
+Day 58 Final 10% + maintenance contract pitch.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Day 0 Site visit + measurement (Sales + designer).
+Day 1-14 Concept + PET (Sales + Gamma/Canva). 50% advance trigger.
+Day 14-21 Procurement (Panna + team). Greenri + Harshdeep + local orders.
+Day 21-22 Site prep.
+Day 23-28 Install (team 2-4 people). Residential 3-5d · Duplex 1 week · Institutional 2-3 weeks.
+Day 28 Handover (Sales + Panna). 40% paid, walkthrough, care manual.
+Day 29-58 30-day support. 2 visits, photo documentation.
+Day 58 Final 10% + maintenance contract pitch.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Day 0 Site visit + measurement (Sales + designer).
+Day 1-14 Concept + PET (Sales + Gamma/Canva). 50% advance trigger.
+Day 14-21 Procurement (Panna + team). Greenri + Harshdeep + local orders.
+Day 21-22 Site prep.
+Day 23-28 Install (team 2-4 people). Residential 3-5d · Duplex 1 week · Institutional 2-3 weeks.
+Day 28 Handover (Sales + Panna). 40% paid, walkthrough, care manual.
+Day 29-58 30-day support. 2 visits, photo documentation.
+Day 58 Final 10% + maintenance contract pitch.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M16-ops-handover', 'যত্ন নির্দেশিকা', 'देखभाल गाइड', 'Care manual + quality commitments', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Given to every client at handover:
+- Plant schedule · watering schedule · light requirements
+- Pest/disease early signs
+- Panna''s 30-day contact
+- Maintenance tier proposal
+- QR to plantlibrary.net
+
+Commitments: all plants certified nurseries · planters inspected before dispatch · trained team only · 15-day replacement guarantee · 30-day post-install care · photo documentation every time.
+
+Escalation: Field issue → Maintenance lead → Panna (48h+) → Reena (client escalating) → Ram (commercial dispute ₹1L+).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Given to every client at handover:
+- Plant schedule · watering schedule · light requirements
+- Pest/disease early signs
+- Panna''s 30-day contact
+- Maintenance tier proposal
+- QR to plantlibrary.net
+
+Commitments: all plants certified nurseries · planters inspected before dispatch · trained team only · 15-day replacement guarantee · 30-day post-install care · photo documentation every time.
+
+Escalation: Field issue → Maintenance lead → Panna (48h+) → Reena (client escalating) → Ram (commercial dispute ₹1L+).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Given to every client at handover:
+- Plant schedule · watering schedule · light requirements
+- Pest/disease early signs
+- Panna''s 30-day contact
+- Maintenance tier proposal
+- QR to plantlibrary.net
+
+Commitments: all plants certified nurseries · planters inspected before dispatch · trained team only · 15-day replacement guarantee · 30-day post-install care · photo documentation every time.
+
+Escalation: Field issue → Maintenance lead → Panna (48h+) → Reena (client escalating) → Ram (commercial dispute ₹1L+).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M17-faq', 'প্র১: KarmYog Vatika কী করে?', 'सवाल 1: KarmYog Vatika क्या करती है?', 'Q1. What does KarmYog Vatika do?', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] We create biophilic living sanctuaries — modular gardens, green walls, planters, plants, complete installations — for homes, offices, institutions. We run the Vatika as a club with membership tiers, a retail counter (Behtar Life Shop), an Academy, and a smart-planter GreenTelligence layer. We also maintain installations monthly.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] We create biophilic living sanctuaries — modular gardens, green walls, planters, plants, complete installations — for homes, offices, institutions. We run the Vatika as a club with membership tiers, a retail counter (Behtar Life Shop), an Academy, and a smart-planter GreenTelligence layer. We also maintain installations monthly.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'We create biophilic living sanctuaries — modular gardens, green walls, planters, plants, complete installations — for homes, offices, institutions. We run the Vatika as a club with membership tiers, a retail counter (Behtar Life Shop), an Academy, and a smart-planter GreenTelligence layer. We also maintain installations monthly.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M17-faq', 'Q2-Q8 দ্রুত রেফারেন্স', 'Q2-Q8 क्विक रेफ़रेंस', 'Q2-Q8 quick reference', 1) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Q2 Legal entity? NatureLink Education Network Pvt Ltd, CIN U74999WB2011PTC167244, ICICI A/c 000605501516 IFSC ICIC0000006.
+Q3 Install duration? Small residential 3-5d, duplex 1-2 weeks, institutional 2-4 weeks. End-to-end 3-4 weeks from 50% advance.
+Q4 Plants die? 15-day replacement. 30-day post-install care. Then maintenance tier from M10.
+Q5 Show me examples? Institutional: visit IIT KGP Research Park + AIM football field. Residential: Atmosphere Topsia / Heights 802 / Downtown 3.
+Q6 vs nursery? Nurseries sell plants. We sell sanctuaries + ecosystems + clubs + Vatika.AI.
+Q7 Payment? 50/40/10 standard. 30-day validity. Non-standard case-by-case.
+Q8 Partner? Parichalak (5.29-15.50% commission, no upfront) or Master Franchisee (₹69L upfront + 5% royalty, whole geography).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Q2 Legal entity? NatureLink Education Network Pvt Ltd, CIN U74999WB2011PTC167244, ICICI A/c 000605501516 IFSC ICIC0000006.
+Q3 Install duration? Small residential 3-5d, duplex 1-2 weeks, institutional 2-4 weeks. End-to-end 3-4 weeks from 50% advance.
+Q4 Plants die? 15-day replacement. 30-day post-install care. Then maintenance tier from M10.
+Q5 Show me examples? Institutional: visit IIT KGP Research Park + AIM football field. Residential: Atmosphere Topsia / Heights 802 / Downtown 3.
+Q6 vs nursery? Nurseries sell plants. We sell sanctuaries + ecosystems + clubs + Vatika.AI.
+Q7 Payment? 50/40/10 standard. 30-day validity. Non-standard case-by-case.
+Q8 Partner? Parichalak (5.29-15.50% commission, no upfront) or Master Franchisee (₹69L upfront + 5% royalty, whole geography).', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Q2 Legal entity? NatureLink Education Network Pvt Ltd, CIN U74999WB2011PTC167244, ICICI A/c 000605501516 IFSC ICIC0000006.
+Q3 Install duration? Small residential 3-5d, duplex 1-2 weeks, institutional 2-4 weeks. End-to-end 3-4 weeks from 50% advance.
+Q4 Plants die? 15-day replacement. 30-day post-install care. Then maintenance tier from M10.
+Q5 Show me examples? Institutional: visit IIT KGP Research Park + AIM football field. Residential: Atmosphere Topsia / Heights 802 / Downtown 3.
+Q6 vs nursery? Nurseries sell plants. We sell sanctuaries + ecosystems + clubs + Vatika.AI.
+Q7 Payment? 50/40/10 standard. 30-day validity. Non-standard case-by-case.
+Q8 Partner? Parichalak (5.29-15.50% commission, no upfront) or Master Franchisee (₹69L upfront + 5% royalty, whole geography).', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M18-pitch-sequence', 'প্রথম ক্লায়েন্ট পিচের ৬ ধাপ', 'पहली क्लाइंट पिच के 6 कदम', 'The 6 steps of any first client pitch', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] 1. Who we are — KarmYog Vatika, biophilic arm of KY21C, NatureLink Education Network, 30 years of practice, 7 active Vatikas.
+2. What we do for them specifically — tailor to THEIR space: duplex, office, campus. 16 SKUs, 150+ species, proprietary modules.
+3. Show a precedent — match scale. Residential → Jhunjhunwala/Dipika. Institutional → IIT KGP/AIM. Franchise → Sumiran.
+4. The numbers — quote the band, not the final price. "For your scope, ₹2-4L band. Silver + Gold in 10 days." Commit to a date.
+5. The process — 50/40/10, 30-day validity, 3-4 week install, 15-day replacement, 30-day support.
+6. Ask for the site visit — close on a CALENDAR commitment, never on the call. "Tuesday 11am, 45 minutes, no fee."', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] 1. Who we are — KarmYog Vatika, biophilic arm of KY21C, NatureLink Education Network, 30 years of practice, 7 active Vatikas.
+2. What we do for them specifically — tailor to THEIR space: duplex, office, campus. 16 SKUs, 150+ species, proprietary modules.
+3. Show a precedent — match scale. Residential → Jhunjhunwala/Dipika. Institutional → IIT KGP/AIM. Franchise → Sumiran.
+4. The numbers — quote the band, not the final price. "For your scope, ₹2-4L band. Silver + Gold in 10 days." Commit to a date.
+5. The process — 50/40/10, 30-day validity, 3-4 week install, 15-day replacement, 30-day support.
+6. Ask for the site visit — close on a CALENDAR commitment, never on the call. "Tuesday 11am, 45 minutes, no fee."', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '1. Who we are — KarmYog Vatika, biophilic arm of KY21C, NatureLink Education Network, 30 years of practice, 7 active Vatikas.
+2. What we do for them specifically — tailor to THEIR space: duplex, office, campus. 16 SKUs, 150+ species, proprietary modules.
+3. Show a precedent — match scale. Residential → Jhunjhunwala/Dipika. Institutional → IIT KGP/AIM. Franchise → Sumiran.
+4. The numbers — quote the band, not the final price. "For your scope, ₹2-4L band. Silver + Gold in 10 days." Commit to a date.
+5. The process — 50/40/10, 30-day validity, 3-4 week install, 15-day replacement, 30-day support.
+6. Ask for the site visit — close on a CALENDAR commitment, never on the call. "Tuesday 11am, 45 minutes, no fee."', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M19-meeting-playbook', 'কল-পূর্ব চেকলিস্ট', 'कॉल से पहले की चेकलिस्ट', 'Pre-call checklist + 30-minute flow', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] Pre-call: this app open. M05 Pricing + M09 Case Studies tabbed. Proposals Registry filtered to likely scope. Site photos if sent. Panna''s number on standby. Ram''s number on standby.
+
+0-3 min Opening: "30 min. I walk you through what we do, show precedents, answer anything. By the end we schedule a site visit."
+3-8 min Who we are.
+8-14 min What we''d do for them — tailor.
+14-20 min Show 1-2 precedents. Match scale.
+20-25 min Numbers + process.
+25-28 min Their questions — stop talking. Answer with number or fact.
+28-30 min Close on calendar. Tuesday 11am.
+
+After call (same day): calendar invite, playbook link if institutional/franchise, log conversation, alert Panna for site visit window.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] Pre-call: this app open. M05 Pricing + M09 Case Studies tabbed. Proposals Registry filtered to likely scope. Site photos if sent. Panna''s number on standby. Ram''s number on standby.
+
+0-3 min Opening: "30 min. I walk you through what we do, show precedents, answer anything. By the end we schedule a site visit."
+3-8 min Who we are.
+8-14 min What we''d do for them — tailor.
+14-20 min Show 1-2 precedents. Match scale.
+20-25 min Numbers + process.
+25-28 min Their questions — stop talking. Answer with number or fact.
+28-30 min Close on calendar. Tuesday 11am.
+
+After call (same day): calendar invite, playbook link if institutional/franchise, log conversation, alert Panna for site visit window.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', 'Pre-call: this app open. M05 Pricing + M09 Case Studies tabbed. Proposals Registry filtered to likely scope. Site photos if sent. Panna''s number on standby. Ram''s number on standby.
+
+0-3 min Opening: "30 min. I walk you through what we do, show precedents, answer anything. By the end we schedule a site visit."
+3-8 min Who we are.
+8-14 min What we''d do for them — tailor.
+14-20 min Show 1-2 precedents. Match scale.
+20-25 min Numbers + process.
+25-28 min Their questions — stop talking. Answer with number or fact.
+28-30 min Close on calendar. Tuesday 11am.
+
+After call (same day): calendar invite, playbook link if institutional/franchise, log conversation, alert Panna for site visit window.', 'published');
+  INSERT INTO arjun_sections (module_id, title_bn, title_hi, title_en, sort_order) VALUES ('M20-first-week', 'KarmYog Vatika-র প্রথম ৭ দিন', 'KarmYog Vatika के पहले 7 दिन', 'Your first 7 days at KarmYog Vatika', 0) RETURNING id INTO sec_id;
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'bn', '[Bengali translation pending Ram + Reena review] ☐ Read every module on this app cover to cover (3-4 hours). Bookmark M05 Pricing, M09 Case Studies, M14 Objection Handling.
+☐ Read vault pages: vatika-business-overview, vatika-product-catalog, brand-identity, proposal-standards, gamma-canva-workflow, vatika-studio, vatika-ai-investor, vatika-iitkgp-research-park.
+☐ Watch all 5 videos in M15.
+☐ Visit one live KarmYog Vatika — Atmosphere Topsia, Rosedale, IIT KGP Studio, or AIM campus.
+☐ Shadow Panna on a site visit or install day.
+☐ Sit in on one Ram sales call (listen only).
+☐ Play with Vatika Ankita (vatika-ankita.vercel.app) — upload a photo, generate a render.
+☐ Draft your first PET for a mock brief. Ram reviews.
+☐ Walk the Harshdeep 2025-26 catalogue + Greenri inventory with Panna. Know the top 20 SKUs.
+☐ Memorise: banking, commercial terms, 5 brand words (sanctuary, transform, nurture, bespoke, biophilic), 4 pillars (Health/Wealth/Nature/Culture), the 4 North Star numbers.
+
+End-of-week-1 check-in with Ram + Reena. First 30-60-90 day goals set.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'hi', '[Hindi translation pending Ram + Reena review] ☐ Read every module on this app cover to cover (3-4 hours). Bookmark M05 Pricing, M09 Case Studies, M14 Objection Handling.
+☐ Read vault pages: vatika-business-overview, vatika-product-catalog, brand-identity, proposal-standards, gamma-canva-workflow, vatika-studio, vatika-ai-investor, vatika-iitkgp-research-park.
+☐ Watch all 5 videos in M15.
+☐ Visit one live KarmYog Vatika — Atmosphere Topsia, Rosedale, IIT KGP Studio, or AIM campus.
+☐ Shadow Panna on a site visit or install day.
+☐ Sit in on one Ram sales call (listen only).
+☐ Play with Vatika Ankita (vatika-ankita.vercel.app) — upload a photo, generate a render.
+☐ Draft your first PET for a mock brief. Ram reviews.
+☐ Walk the Harshdeep 2025-26 catalogue + Greenri inventory with Panna. Know the top 20 SKUs.
+☐ Memorise: banking, commercial terms, 5 brand words (sanctuary, transform, nurture, bespoke, biophilic), 4 pillars (Health/Wealth/Nature/Culture), the 4 North Star numbers.
+
+End-of-week-1 check-in with Ram + Reena. First 30-60-90 day goals set.', 'review');
+  INSERT INTO arjun_content (section_id, lang, body, status) VALUES (sec_id, 'en', '☐ Read every module on this app cover to cover (3-4 hours). Bookmark M05 Pricing, M09 Case Studies, M14 Objection Handling.
+☐ Read vault pages: vatika-business-overview, vatika-product-catalog, brand-identity, proposal-standards, gamma-canva-workflow, vatika-studio, vatika-ai-investor, vatika-iitkgp-research-park.
+☐ Watch all 5 videos in M15.
+☐ Visit one live KarmYog Vatika — Atmosphere Topsia, Rosedale, IIT KGP Studio, or AIM campus.
+☐ Shadow Panna on a site visit or install day.
+☐ Sit in on one Ram sales call (listen only).
+☐ Play with Vatika Ankita (vatika-ankita.vercel.app) — upload a photo, generate a render.
+☐ Draft your first PET for a mock brief. Ram reviews.
+☐ Walk the Harshdeep 2025-26 catalogue + Greenri inventory with Panna. Know the top 20 SKUs.
+☐ Memorise: banking, commercial terms, 5 brand words (sanctuary, transform, nurture, bespoke, biophilic), 4 pillars (Health/Wealth/Nature/Culture), the 4 North Star numbers.
+
+End-of-week-1 check-in with Ram + Reena. First 30-60-90 day goals set.', 'published');
+END $$;
+
+-- VIDEOS
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('6s7zI_W0sko', 'M15-video-library', 'KarmYog Vatika ব্যাখ্যা ১', 'KarmYog Vatika परिचय 1', 'KarmYog Vatika Explainer 1', 0, 0);
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('VVheqkr97wI', 'M15-video-library', 'KarmYog Vatika ব্যাখ্যা ২', 'KarmYog Vatika परिचय 2', 'KarmYog Vatika Explainer 2', 0, 1);
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('-NHfMxGTd1c', 'M15-video-library', 'KarmYog Vatika ব্যাখ্যা ৩ (৫:২৪ থেকে)', 'KarmYog Vatika परिचय 3 (5:24 से)', 'KarmYog Vatika Explainer 3 (starts 5:24)', 324, 2);
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('R4JtntEFOjY', 'M15-video-library', 'KarmYog Vatika ব্যাখ্যা ৪', 'KarmYog Vatika परिचय 4', 'KarmYog Vatika Explainer 4', 0, 3);
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('YfX-aeVlKLA', 'M15-video-library', 'KarmYog Vatika ব্যাখ্যা ৫ (০:২৮ থেকে)', 'KarmYog Vatika परिचय 5 (0:28 से)', 'KarmYog Vatika Explainer 5 (starts 0:28)', 28, 4);
+INSERT INTO arjun_videos (youtube_id, module_id, title_bn, title_hi, title_en, start_seconds, sort_order) VALUES ('6s7zI_W0sko', 'M00-welcome', 'স্বাগত ভিডিও', 'स्वागत वीडियो', 'Featured welcome video', 0, 5);
+
+-- Done.

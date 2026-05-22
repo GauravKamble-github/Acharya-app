@@ -53,14 +53,19 @@ export function stripAcharyaPrefix(pathname: string): string {
   return pathname || "/";
 }
 
+function normalizeAcharyaPath(path: string): string {
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  return stripAcharyaPrefix(clean);
+}
+
 export function acharyaRoute(path: string): string {
   const slug = currentAcharyaSlug();
-  const clean = path.startsWith("/") ? path : `/${path}`;
+  const clean = normalizeAcharyaPath(path);
   return `/${slug}${clean === "/" ? "" : clean}`;
 }
 
 export function acharyaRouteFor(slug: string, path: string): string {
-  const clean = path.startsWith("/") ? path : `/${path}`;
+  const clean = normalizeAcharyaPath(path);
   return `/${slug}${clean === "/" ? "" : clean}`;
 }
 

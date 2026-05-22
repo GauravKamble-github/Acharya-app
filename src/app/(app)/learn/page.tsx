@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/api-client';
 import { t } from '@/lib/i18n/labels';
@@ -14,9 +13,10 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ModuleSelector } from '@/components/shell/Selectors';
+import { useShellNavigation } from '@/components/shell/ShellNavigation';
 
 export default function LearnPage() {
-  const router = useRouter();
+  const { navigateInShell } = useShellNavigation();
   const { selectedModuleId, lang, modules, progress, updateProgress, setModule } = useStore();
   const [sections, setSections] = useState<(Section & { content?: Content | null })[]>([]);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -159,7 +159,7 @@ export default function LearnPage() {
 
           function goToQuiz() {
             trackEvent('quiz_from_learn', selectedModuleId);
-            router.push('/quiz');
+            navigateInShell('/quiz');
           }
 
           return (
@@ -274,7 +274,7 @@ export default function LearnPage() {
                           variant="secondary"
                           size="sm"
                           icon="sparkle"
-                          onClick={() => router.push('/progress')}
+                          onClick={() => navigateInShell('/progress')}
                         >
                           {lang === 'bn'
                             ? 'অগ্রগতি দেখো'

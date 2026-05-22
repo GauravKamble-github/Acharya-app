@@ -28,7 +28,7 @@ const copy = {
     useLocation: 'Use my location',
     rain: 'Rain',
     noWeather: 'Weather is loading. If it stays blank, check your internet connection.',
-    noMandi: 'Live mandi prices need a free data.gov.in API key. Until then, use this tab as a price-check reminder.',
+    noMandi: 'Live mandi prices are temporarily unavailable. Use this tab as a price-check reminder and verify locally.',
     fertilizerNote: 'Use this for planning only. Final dose should follow soil test, crop stage, label, and local officer/KVK guidance.',
     steps: [
       ['Seed/Nursery', 'Prepare seed and field records.'],
@@ -56,7 +56,7 @@ const copy = {
     useLocation: 'मेरी लोकेशन',
     rain: 'बारिश',
     noWeather: 'मौसम लोड हो रहा है। अगर खाली रहे तो इंटरनेट जांचें।',
-    noMandi: 'लाइव मंडी भाव के लिए मुफ्त data.gov.in API key चाहिए। तब तक इस टैब को भाव-जांच याद दिलाने के लिए इस्तेमाल करें।',
+    noMandi: 'लाइव मंडी भाव अभी उपलब्ध नहीं हैं। भाव-जांच की याद के लिए इस टैब का उपयोग करें और स्थानीय मंडी से पुष्टि करें।',
     fertilizerNote: 'यह सिर्फ योजना के लिए है। अंतिम मात्रा मिट्टी जांच, फसल अवस्था, लेबल और स्थानीय कृषि अधिकारी/KVK की सलाह से तय करें।',
     steps: [
       ['बीज/नर्सरी', 'बीज और खेत का रिकॉर्ड तैयार करें।'],
@@ -84,7 +84,7 @@ const copy = {
     useLocation: 'আমার লোকেশন',
     rain: 'বৃষ্টি',
     noWeather: 'আবহাওয়া লোড হচ্ছে। খালি থাকলে ইন্টারনেট দেখুন।',
-    noMandi: 'লাইভ মণ্ডির দামের জন্য বিনামূল্যের data.gov.in API key দরকার। ততক্ষণ এই ট্যাবটি দাম যাচাইয়ের মনে করিয়ে দেওয়ার জন্য ব্যবহার করুন।',
+    noMandi: 'লাইভ মণ্ডির দাম এখন উপলব্ধ নয়। দাম যাচাইয়ের মনে করিয়ে দেওয়ার জন্য এই ট্যাব ব্যবহার করুন এবং স্থানীয় মণ্ডিতে নিশ্চিত করুন।',
     fertilizerNote: 'এটি শুধু পরিকল্পনার জন্য। চূড়ান্ত মাত্রা মাটি পরীক্ষা, ফসলের অবস্থা, লেবেল এবং স্থানীয় কৃষি আধিকারিক/KVK পরামর্শ অনুযায়ী ঠিক করুন।',
     steps: [
       ['বীজ/নার্সারি', 'বীজ এবং মাঠের রেকর্ড প্রস্তুত করুন।'],

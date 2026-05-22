@@ -18,10 +18,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <Shell>
-      <ModuleLoader />
-      <LearnerInit />
-      <ConfigWarning />
+    <Shell
+      persistent={
+        <>
+          <ModuleLoader />
+          <LearnerInit />
+          <ConfigWarning />
+        </>
+      }
+    >
       {children}
     </Shell>
   );

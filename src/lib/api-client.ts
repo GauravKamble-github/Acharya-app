@@ -35,9 +35,8 @@ export function currentAcharyaSlug(): ClientAcharyaSlug {
   return getDefaultAcharya().slug as ClientAcharyaSlug;
 }
 
-export function withAcharyaPath(path: string): string {
+export function withAcharyaPath(path: string, slug = currentAcharyaSlug()): string {
   if (!path.startsWith("/api/")) return path;
-  const slug = currentAcharyaSlug();
   const rest = path.slice("/api".length);
   return `/api/${slug}${rest}`;
 }
@@ -54,10 +53,10 @@ export function withAcharyaRoute(path: string): string {
 
 async function request<T>(
   path: string,
-  init?: RequestInit & { json?: unknown }
+  init?: RequestInit & { json?: unknown; acharyaSlug?: ClientAcharyaSlug | string }
 ): Promise<JsonOk<T>> {
-  const { json, ...rest } = init || {};
-  const res = await fetch(withAcharyaPath(path), {
+  const { json, acharyaSlug, ...rest } = init || {};
+  const res = await fetch(withAcharyaPath(path, acharyaSlug), {
     method: json !== undefined ? "POST" : "GET",
     credentials: "same-origin",
     headers: json !== undefined ? { "Content-Type": "application/json" } : undefined,
@@ -319,7 +318,7 @@ const auth = {
 // Admin (require session cookie)
 // ================================================================
 const admin = {
-  stats: async () => {
+  stats: async (acharyaSlug?: ClientAcharyaSlug | string) => {
     return await request<{
       modules: number;
       sections: number;
@@ -327,10 +326,10 @@ const admin = {
       videos: number;
       learners: number;
       quizAttempts: number;
-    }>("/api/admin/stats");
+    }>("/api/admin/stats", { acharyaSlug });
   },
 
-  learners: async (page = 0) => {
+  learners: async (page = 0, acharyaSlug?: ClientAcharyaSlug | string) => {
     return await request<{
       learners: Array<{
         id: string;
@@ -347,16 +346,16 @@ const admin = {
       totalCount: number;
       page: number;
       pageSize: number;
-    }>(`/api/admin/learners?page=${page}`);
+    }>(`/api/admin/learners?page=${page}`, { acharyaSlug });
   },
 
-  modules: async () => {
+  modules: async (acharyaSlug?: ClientAcharyaSlug | string) => {
     return await request<{
       modules: Array<Module & { sectionCount: number; contentCount: number }>;
-    }>("/api/admin/modules");
+    }>("/api/admin/modules", { acharyaSlug });
   },
 
-  module: async (id: string) => {
+  module: async (id: string, acharyaSlug?: ClientAcharyaSlug | string) => {
     return await request<{
       module: Module;
       sections: Array<
@@ -364,15 +363,15 @@ const admin = {
           content: Record<Lang, Content | null>;
         }
       >;
-    }>(`/api/admin/modules/${encodeURIComponent(id)}`);
+    }>(`/api/admin/modules/${encodeURIComponent(id)}`, { acharyaSlug });
   },
 
-  addSection: async (moduleId: string, sortOrder: number): Promise<void> => {
-    await request("/api/admin/sections", { json: { moduleId, sortOrder } });
+  addSection: async (moduleId: string, sortOrder: number, acharyaSlug?: ClientAcharyaSlug | string): Promise<void> => {
+    await request("/api/admin/sections", { json: { moduleId, sortOrder }, acharyaSlug });
   },
 
-  updateSection: async (id: string, patch: Record<string, unknown>): Promise<void> => {
-    const res = await fetch(withAcharyaPath(`/api/admin/sections/${encodeURIComponent(id)}`), {
+  updateSection: async (id: string, patch: Record<string, unknown>, acharyaSlug?: ClientAcharyaSlug | string): Promise<void> => {
+    const res = await fetch(withAcharyaPath(`/api/admin/sections/${encodeURIComponent(id)}`, acharyaSlug), {
       method: "PATCH",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
@@ -385,22 +384,23 @@ const admin = {
     }
   },
 
-  deleteSection: async (id: string): Promise<void> => {
-    const res = await fetch(withAcharyaPath(`/api/admin/sections/${encodeURIComponent(id)}`), {
+  deleteSection: async (id: string, acharyaSlug?: ClientAcharyaSlug | string): Promise<void> => {
+    const res = await fetch(withAcharyaPath(`/api/admin/sections/${encodeURIComponent(id)}`, acharyaSlug), {
       method: "DELETE",
       credentials: "same-origin",
     });
     if (!res.ok) throw new ApiError(res.status, "Delete failed");
   },
 
-  upsertContent: async (sectionId: string, lang: Lang, body: string): Promise<void> => {
+  upsertContent: async (sectionId: string, lang: Lang, body: string, acharyaSlug?: ClientAcharyaSlug | string): Promise<void> => {
     await request("/api/admin/content", {
       json: { sectionId, lang, body },
+      acharyaSlug,
     });
   },
 
   // List of conversations — one row per (learner, module, lang) combo.
-  chatConversations: async (opts: { page?: number; learnerId?: string; moduleId?: string } = {}) => {
+  chatConversations: async (opts: { page?: number; learnerId?: string; moduleId?: string; acharyaSlug?: ClientAcharyaSlug | string } = {}) => {
     const qs = new URLSearchParams();
     if (opts.page !== undefined) qs.set("page", String(opts.page));
     if (opts.learnerId) qs.set("learnerId", opts.learnerId);
@@ -420,11 +420,11 @@ const admin = {
       totalCount: number;
       page: number;
       pageSize: number;
-    }>(`/api/admin/chat-logs?${qs}`);
+    }>(`/api/admin/chat-logs?${qs}`, { acharyaSlug: opts.acharyaSlug });
   },
 
   // All messages in a single conversation, oldest-first.
-  chatConversation: async (opts: { learnerId: string; moduleId?: string; lang?: string }) => {
+  chatConversation: async (opts: { learnerId: string; moduleId?: string; lang?: string; acharyaSlug?: ClientAcharyaSlug | string }) => {
     const qs = new URLSearchParams({ learnerId: opts.learnerId });
     if (opts.moduleId) qs.set("moduleId", opts.moduleId);
     if (opts.lang) qs.set("lang", opts.lang);
@@ -439,10 +439,10 @@ const admin = {
         response_time_ms: number | null;
         created_at: string;
       }>;
-    }>(`/api/admin/chat-logs/conversation?${qs}`);
+    }>(`/api/admin/chat-logs/conversation?${qs}`, { acharyaSlug: opts.acharyaSlug });
   },
 
-  applyLogs: async (opts: { page?: number; learnerId?: string; moduleId?: string } = {}) => {
+  applyLogs: async (opts: { page?: number; learnerId?: string; moduleId?: string; acharyaSlug?: ClientAcharyaSlug | string } = {}) => {
     const qs = new URLSearchParams();
     if (opts.page !== undefined) qs.set("page", String(opts.page));
     if (opts.learnerId) qs.set("learnerId", opts.learnerId);
@@ -465,10 +465,10 @@ const admin = {
       totalCount: number;
       page: number;
       pageSize: number;
-    }>(`/api/admin/apply-logs?${qs}`);
+    }>(`/api/admin/apply-logs?${qs}`, { acharyaSlug: opts.acharyaSlug });
   },
 
-  events: async (opts: { page?: number; learnerId?: string; eventType?: string } = {}) => {
+  events: async (opts: { page?: number; learnerId?: string; eventType?: string; acharyaSlug?: ClientAcharyaSlug | string } = {}) => {
     const qs = new URLSearchParams();
     if (opts.page !== undefined) qs.set("page", String(opts.page));
     if (opts.learnerId) qs.set("learnerId", opts.learnerId);
@@ -485,7 +485,7 @@ const admin = {
       page: number;
       pageSize: number;
       distinctTypes: string[];
-    }>(`/api/admin/events?${qs}`);
+    }>(`/api/admin/events?${qs}`, { acharyaSlug: opts.acharyaSlug });
   },
 };
 

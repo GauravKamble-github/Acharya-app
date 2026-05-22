@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ACHARYA_BRANDS,
   ACHARYA_COLORS,
@@ -17,6 +18,7 @@ interface Props {
 
 export default function AcharyaSwitcher({ className = "", fullWidth = false }: Props) {
   const brand = currentAcharyaBrand();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -68,7 +70,7 @@ export default function AcharyaSwitcher({ className = "", fullWidth = false }: P
                 setOpen(false);
                 if (item.slug === brand.slug) return;
                 const currentPath = stripAcharyaPrefix(window.location.pathname) || "/";
-                window.location.href = `${acharyaRouteFor(item.slug, currentPath)}${window.location.search}`;
+                router.push(`${acharyaRouteFor(item.slug, currentPath)}${window.location.search}`);
               }}
               className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors hover:bg-sage ${
                 item.slug === brand.slug ? "bg-cream" : ""

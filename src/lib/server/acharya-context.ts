@@ -6,10 +6,11 @@ import {
   getAcharyaSlugFromRequest,
   acharyaSchemaFor,
   isMissingDbObject,
+  isNetworkUnavailable,
   publicAcharyaTable,
   type AcharyaSlug,
 } from "./supabase";
-import { ACHARYAS, getDefaultAcharya, type AcharyaDef } from "../acharya-config";
+import { ACHARYAS } from "../acharya-config";
 
 export interface AcharyaBrand {
   name: string;
@@ -85,7 +86,7 @@ async function loadConfig(slug: AcharyaSlug): Promise<Record<string, unknown>> {
     .eq("is_deleted", false);
 
   if (error || !data) {
-    if (error && !isMissingDbObject(error)) {
+    if (error && !isMissingDbObject(error) && !isNetworkUnavailable(error)) {
       console.warn(`[acharya:${slug}] config lookup failed:`, error.message);
     }
     return {};

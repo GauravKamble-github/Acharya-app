@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Tag } from '@/components/ui/Tag';
 import { Icon, type IconName } from '@/components/ui/Icon';
-import { ACHARYA_BRANDS, ACHARYA_COLORS } from '@/lib/acharya-client';
+import { ACHARYA_COLORS } from '@/lib/acharya-client';
+import { useAdminAcharya } from '@/lib/admin-acharya-context';
 
 interface AcharyaStats {
   modules: number;
@@ -56,7 +57,8 @@ async function fetchLearners(
 }
 
 export default function AdminDashboard() {
-  const [acharyaData, setAcharyaData] = useState<Record<string, AcharyaStats | null>>({});
+  const { activeSlug, activeBrand } = useAdminAcharya();
+  const [stats, setStats] = useState<AcharyaStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'learners'>('overview');
 
@@ -64,16 +66,10 @@ export default function AdminDashboard() {
     let cancelled = false;
 
     async function load() {
-      const slugs = Object.keys(ACHARYA_BRANDS);
-      const results: Record<string, AcharyaStats | null> = {};
-
-      for (const slug of slugs) {
-        const stats = await fetchStats(slug);
-        if (!cancelled) results[slug] = stats;
-      }
-
+      setLoading(true);
+      const nextStats = await fetchStats(activeSlug);
       if (!cancelled) {
-        setAcharyaData(results);
+        setStats(nextStats);
         setLoading(false);
       }
     }
@@ -82,7 +78,7 @@ export default function AdminDashboard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeSlug]);
 
   if (loading) {
     return (
@@ -95,9 +91,9 @@ export default function AdminDashboard() {
   return (
     <div>
       <div className="mb-6">
-        <Tag tone="muted">Unified Admin</Tag>
-        <h1 className="font-serif italic text-3xl lg:text-4xl text-forest mt-2">All Acharyas</h1>
-        <p className="text-sm text-muted mt-1">Overview across all 4 acharyas.</p>
+        <Tag tone="muted">Admin Dashboard</Tag>
+        <h1 className="font-serif italic text-3xl lg:text-4xl text-forest mt-2">{activeBrand.name}</h1>
+        <p className="text-sm text-muted mt-1">Live data fetched through the selected Acharya API.</p>
       </div>
 
       <div className="flex gap-1 bg-cream border border-line rounded-full p-0.5 w-fit mb-6">
@@ -115,71 +111,68 @@ export default function AdminDashboard() {
       </div>
 
       {selectedTab === 'overview' ? (
-        <OverviewTab acharyaData={acharyaData} />
+        <OverviewTab slug={activeSlug} brandName={activeBrand.name} stats={stats} />
       ) : (
-        <LearnersTab />
+        <LearnersTab slug={activeSlug} brandName={activeBrand.name} />
       )}
     </div>
   );
 }
 
-function OverviewTab({ acharyaData }: { acharyaData: Record<string, AcharyaStats | null> }) {
+function OverviewTab({
+  slug,
+  brandName,
+  stats,
+}: {
+  slug: string;
+  brandName: string;
+  stats: AcharyaStats | null;
+}) {
+  const color = ACHARYA_COLORS[slug] || '#264E2E';
+
   return (
     <div className="space-y-4">
-      {Object.entries(ACHARYA_BRANDS).map(([slug, brand]) => {
-        const stats = acharyaData[slug];
-        const color = ACHARYA_COLORS[slug] || '#264E2E';
+      <Card tone="surface" padding="lg">
+        <div className="flex items-center gap-3 mb-4">
+          <span
+            className="w-3 h-3 rounded-full shrink-0"
+            style={{ backgroundColor: color }}
+          />
+          <h2 className="font-serif italic text-xl text-ink">{brandName}</h2>
+          <Tag tone="muted">{slug}</Tag>
+          {!stats && <Tag tone="muted" className="text-terra">No data</Tag>}
+        </div>
 
-        return (
-          <Card key={slug} tone="surface" padding="lg">
-            <div className="flex items-center gap-3 mb-4">
-              <span
-                className="w-3 h-3 rounded-full shrink-0"
-                style={{ backgroundColor: color }}
-              />
-              <h2 className="font-serif italic text-xl text-ink">{brand.name}</h2>
-              <Tag tone="muted">{slug}</Tag>
-              {!stats && <Tag tone="muted" className="text-terra">No data</Tag>}
-            </div>
-
-            {stats ? (
-              <div className="grid grid-cols-3 gap-3">
-                {STAT_DEFS.map((s) => (
-                  <div key={s.key} className="text-center bg-cream rounded-xl p-3">
-                    <Icon name={s.icon} size={18} className="text-forest mx-auto mb-1" />
-                    <div className="font-serif italic text-2xl text-ink">{stats[s.key]}</div>
-                    <div className="text-[10px] text-muted uppercase tracking-wider">{s.label}</div>
-                  </div>
-                ))}
+        {stats ? (
+          <div className="grid grid-cols-3 gap-3">
+            {STAT_DEFS.map((s) => (
+              <div key={s.key} className="text-center bg-cream rounded-xl p-3">
+                <Icon name={s.icon} size={18} className="text-forest mx-auto mb-1" />
+                <div className="font-serif italic text-2xl text-ink">{stats[s.key]}</div>
+                <div className="text-[10px] text-muted uppercase tracking-wider">{s.label}</div>
               </div>
-            ) : (
-              <p className="text-xs text-muted italic">Schema not set up yet.</p>
-            )}
-          </Card>
-        );
-      })}
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-muted italic">Schema not set up yet.</p>
+        )}
+      </Card>
     </div>
   );
 }
 
-function LearnersTab() {
-  const [learnersBySlug, setLearnersBySlug] = useState<Record<string, LearnerSummary[]>>({});
+function LearnersTab({ slug, brandName }: { slug: string; brandName: string }) {
+  const [learners, setLearners] = useState<LearnerSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const slugs = Object.keys(ACHARYA_BRANDS);
-      const results: Record<string, LearnerSummary[]> = {};
-
-      for (const slug of slugs) {
-        const data = await fetchLearners(slug);
-        if (!cancelled) results[slug] = data?.learners || [];
-      }
-
+      setLoading(true);
+      const data = await fetchLearners(slug);
       if (!cancelled) {
-        setLearnersBySlug(results);
+        setLearners(data?.learners || []);
         setLoading(false);
       }
     }
@@ -188,7 +181,7 @@ function LearnersTab() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -200,59 +193,52 @@ function LearnersTab() {
 
   return (
     <div className="space-y-4">
-      {Object.entries(ACHARYA_BRANDS).map(([slug, brand]) => {
-        const learners = learnersBySlug[slug] || [];
-        const color = ACHARYA_COLORS[slug] || '#264E2E';
+      <Card tone="surface" padding="lg">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ACHARYA_COLORS[slug] || '#264E2E' }} />
+          <h2 className="font-serif italic text-lg text-ink">{brandName}</h2>
+          <Tag tone="muted">{learners.length} learners</Tag>
+        </div>
 
-        return (
-          <Card key={slug} tone="surface" padding="lg">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
-              <h2 className="font-serif italic text-lg text-ink">{brand.name}</h2>
-              <Tag tone="muted">{learners.length} learners</Tag>
-            </div>
+        {learners.length === 0 ? (
+          <p className="text-xs text-muted italic">No learners yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left text-[11px] text-muted uppercase tracking-wider">
+                  <th className="py-2 pr-4 font-medium">Phone</th>
+                  <th className="py-2 pr-4 font-medium">Name</th>
+                  <th className="py-2 pr-4 font-medium">Role</th>
+                  <th className="py-2 pr-4 font-medium">Lang</th>
+                  <th className="py-2 pr-4 font-medium">Progress</th>
+                  <th className="py-2 font-medium">Quizzes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {learners.slice(0, 20).map((learner) => {
+                  const role = learner.role || 'user';
 
-            {learners.length === 0 ? (
-              <p className="text-xs text-muted italic">No learners yet.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-line text-left text-[11px] text-muted uppercase tracking-wider">
-                      <th className="py-2 pr-4 font-medium">Phone</th>
-                      <th className="py-2 pr-4 font-medium">Name</th>
-                      <th className="py-2 pr-4 font-medium">Role</th>
-                      <th className="py-2 pr-4 font-medium">Lang</th>
-                      <th className="py-2 pr-4 font-medium">Progress</th>
-                      <th className="py-2 font-medium">Quizzes</th>
+                  return (
+                    <tr key={learner.id} className="border-b border-line/60">
+                      <td className="py-2 pr-4 font-mono text-xs">{learner.phone || 'N/A'}</td>
+                      <td className="py-2 pr-4">{learner.name || 'N/A'}</td>
+                      <td className="py-2 pr-4">
+                        <Tag tone={role === 'founder' ? 'forest' : role === 'admin' ? 'gold' : 'muted'}>
+                          {role}
+                        </Tag>
+                      </td>
+                      <td className="py-2 pr-4 text-xs">{learner.preferred_lang}</td>
+                      <td className="py-2 pr-4 text-xs">{learner.progressCount || 0}</td>
+                      <td className="py-2 text-xs">{learner.quizCount || 0}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {learners.slice(0, 20).map((learner) => {
-                      const role = learner.role || 'user';
-
-                      return (
-                        <tr key={learner.id} className="border-b border-line/60">
-                          <td className="py-2 pr-4 font-mono text-xs">{learner.phone || 'N/A'}</td>
-                          <td className="py-2 pr-4">{learner.name || 'N/A'}</td>
-                          <td className="py-2 pr-4">
-                            <Tag tone={role === 'founder' ? 'forest' : role === 'admin' ? 'gold' : 'muted'}>
-                              {role}
-                            </Tag>
-                          </td>
-                          <td className="py-2 pr-4 text-xs">{learner.preferred_lang}</td>
-                          <td className="py-2 pr-4 text-xs">{learner.progressCount || 0}</td>
-                          <td className="py-2 text-xs">{learner.quizCount || 0}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </Card>
-        );
-      })}
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

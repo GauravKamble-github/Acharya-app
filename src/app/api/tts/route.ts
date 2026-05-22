@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid text' }, { status: 400 });
   }
 
-  const apiKey = process.env.GOOGLE_TTS_KEY;
+  const apiKey = process.env.GOOGLE_TTS_KEY || process.env.GOOGLE_TTS_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: 'Voice service not configured' }, { status: 500 });
   }

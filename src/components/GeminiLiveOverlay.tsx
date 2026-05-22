@@ -3,10 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import type { Lang } from "@/lib/types";
 import { api, ApiError } from "@/lib/api-client";
+import { currentAcharyaBrand } from "@/lib/acharya-client";
+import { useVoiceRecognition } from "@/lib/use-voice-recognition";
+import { speakWithBrowser, stopBrowserSpeech } from "@/lib/browser-speech";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
 
-type LiveState = "connecting" | "idle" | "recording" | "speaking" | "error";
+type LiveState = "connecting" | "idle" | "recording" | "thinking" | "speaking" | "error";
 
 interface Props {
   open: boolean;
@@ -20,10 +23,16 @@ interface Props {
 }
 
 const copy = {
-  bn: { hold: "ধরে বলো", listen: "শুনছি...", speak: "অর্জুন বলছে...", connect: "জোড়া লাগছে...", close: "বন্ধ" },
-  hi: { hold: "दबाकर बोलो", listen: "सुन रहा हूँ...", speak: "अर्जुन बोल रहा है...", connect: "जुड़ रहा है...", close: "बंद" },
-  en: { hold: "Hold to talk", listen: "Listening...", speak: "Arjun is speaking...", connect: "Connecting...", close: "Close" },
+  bn: { hold: "ধরে বলো", listen: "শুনছি...", connect: "জোড়া লাগছে...", close: "বন্ধ" },
+  hi: { hold: "दबाकर बोलो", listen: "सुन रहा हूँ...", connect: "जुड़ रहा है...", close: "बंद" },
+  en: { hold: "Hold to talk", listen: "Listening...", connect: "Connecting...", close: "Close" },
 } as const;
+
+function speakingLabel(lang: Lang, speakerName: string) {
+  if (lang === "bn") return `${speakerName} বলছে...`;
+  if (lang === "hi") return `${speakerName} बोल रहा है...`;
+  return `${speakerName} is speaking...`;
+}
 
 function base64ToBytes(b64: string) {
   const bin = atob(b64);
@@ -72,11 +81,14 @@ export default function GeminiLiveOverlay({
   onTurnComplete,
 }: Props) {
   const c = copy[lang];
+  const speakerName = currentAcharyaBrand().shortName;
   const [state, setState] = useState<LiveState>("connecting");
   const [error, setError] = useState("");
   const [statusDetail, setStatusDetail] = useState("");
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
+  const [browserFallback, setBrowserFallback] = useState(false);
+  const speech = useVoiceRecognition(lang);
   const wsRef = useRef<WebSocket | null>(null);
   const inputTextRef = useRef("");
   const outputTextRef = useRef("");
@@ -89,15 +101,20 @@ export default function GeminiLiveOverlay({
   const activeSourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
   const recordingRef = useRef(false);
   const setupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handledTranscriptRef = useRef("");
+  const fallbackAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    void connect(cancelled);
+    void connect(() => cancelled);
     return () => {
       cancelled = true;
       stopRecording();
       closeSocket();
+      speech.reset();
+      stopFallbackAudio();
+      stopBrowserSpeech();
       clearSetupTimer();
       void audioCtxRef.current?.close().catch(() => undefined);
       audioCtxRef.current = null;
@@ -105,13 +122,23 @@ export default function GeminiLiveOverlay({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, mode, lang, moduleId]);
 
-  async function connect(cancelled: boolean) {
+  useEffect(() => {
+    if (!open || !browserFallback) return;
+    const text = speech.transcript.trim();
+    if (!text || text === handledTranscriptRef.current) return;
+    handledTranscriptRef.current = text;
+    void runBrowserVoiceTurn(text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speech.transcript, open, browserFallback]);
+
+  async function connect(isCancelled: () => boolean) {
     setState("connecting");
     setError("");
+    setBrowserFallback(false);
     setStatusDetail("Minting live token");
     try {
       const token = await api.ai.geminiLiveToken({ mode, moduleId, lang });
-      if (cancelled) return;
+      if (isCancelled()) return;
       setStatusDetail("Opening live socket");
       const ws = new WebSocket(token.websocketUrl);
       wsRef.current = ws;
@@ -135,21 +162,27 @@ export default function GeminiLiveOverlay({
       };
       ws.onerror = (event) => {
         console.error("[GeminiLive] socket error", event);
-        setError("Gemini Live connection failed");
-        setState("error");
+        enableBrowserFallback("Live voice unavailable; using browser voice");
       };
       ws.onclose = (event) => {
         clearSetupTimer();
         console.warn("[GeminiLive] socket closed", { code: event.code, reason: event.reason, wasClean: event.wasClean });
-        if (!cancelled && state === "connecting") {
-          setError(`Gemini Live socket closed before setup (${event.code || "no code"})`);
-          setState("error");
+        if (!isCancelled() && state === "connecting") {
+          enableBrowserFallback("Live voice unavailable; using browser voice");
         }
       };
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Could not start voice session");
-      setState("error");
+      console.warn("[GeminiLive] falling back to browser voice", err);
+      enableBrowserFallback("Using browser voice and Google TTS");
     }
+  }
+
+  function enableBrowserFallback(detail: string) {
+    closeSocket();
+    setBrowserFallback(true);
+    setError("");
+    setStatusDetail(detail);
+    setState("idle");
   }
 
   function closeSocket() {
@@ -237,6 +270,19 @@ export default function GeminiLiveOverlay({
       try { src.stop(); } catch { /* already stopped */ }
     }
     activeSourcesRef.current.clear();
+    stopFallbackAudio();
+  }
+
+  function stopFallbackAudio() {
+    const audio = fallbackAudioRef.current;
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.src = "";
+    } catch {
+      // ignore
+    }
+    stopBrowserSpeech();
   }
 
   function enqueueAudio(b64: string) {
@@ -270,6 +316,20 @@ export default function GeminiLiveOverlay({
     outputTextRef.current = "";
     recordingRef.current = true;
     setState("recording");
+
+    if (browserFallback) {
+      if (speech.supported === false) {
+        recordingRef.current = false;
+        setError("Browser speech recognition is not available in this browser. Try Chrome or Edge, or type your question.");
+        setState("error");
+        return;
+      }
+      handledTranscriptRef.current = "";
+      speech.reset();
+      speech.start();
+      return;
+    }
+
     const ctx = audioCtxRef.current || new AudioContext();
     audioCtxRef.current = ctx;
     await ctx.resume();
@@ -295,6 +355,11 @@ export default function GeminiLiveOverlay({
   function stopRecording() {
     if (!recordingRef.current) return;
     recordingRef.current = false;
+    if (browserFallback) {
+      speech.stop();
+      setState("idle");
+      return;
+    }
     try {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({ realtimeInput: { audioStreamEnd: true } }));
@@ -309,11 +374,73 @@ export default function GeminiLiveOverlay({
     setState("idle");
   }
 
+  async function runBrowserVoiceTurn(text: string) {
+    const userText = text.trim();
+    if (!userText) return;
+    setInputText(userText);
+    setOutputText("");
+    setState("thinking");
+    setError("");
+
+    const prompt = mode === "apply"
+      ? `FIELD COACHING CONVERSATION.
+
+The learner is reporting field work for module ${moduleId}. Reply in one short, practical sentence. Do not score yet.
+
+Latest user turn: "${userText}"`
+      : userText;
+
+    try {
+      const { reply } = await api.ai.chat({
+        message: prompt,
+        history: [],
+        moduleId,
+        lang,
+      });
+      const modelText = reply.trim() || "I heard you. Please add one more detail.";
+      setOutputText(modelText);
+      onTurnComplete?.({ userText, modelText });
+      await playFallbackReply(modelText);
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Voice reply failed";
+      setError(msg);
+      onTurnComplete?.({ userText, modelText: "" });
+      setState("idle");
+    }
+  }
+
+  async function playFallbackReply(text: string) {
+    setState("speaking");
+    try {
+      const blob = await api.ai.tts(text, lang);
+      const url = URL.createObjectURL(blob);
+      const audio = fallbackAudioRef.current || new Audio();
+      fallbackAudioRef.current = audio;
+      await new Promise<void>((resolve) => {
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        audio.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        audio.src = url;
+        void audio.play().catch(() => resolve());
+      });
+    } catch {
+      await speakWithBrowser(text, lang);
+    } finally {
+      if (!recordingRef.current) setState("idle");
+    }
+  }
+
   if (!open) return null;
   const label =
     state === "connecting" ? c.connect :
     state === "recording" ? c.listen :
-    state === "speaking" ? c.speak :
+    state === "thinking" ? "Thinking..." :
+    state === "speaking" ? speakingLabel(lang, speakerName) :
     c.hold;
 
   return (
@@ -321,7 +448,7 @@ export default function GeminiLiveOverlay({
       <div className="shrink-0 flex items-center justify-between px-4 py-4">
         <div className="min-w-0">
           <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-gold">
-            Gemini Live
+            {browserFallback ? "Voice Assist" : "Gemini Live"}
           </p>
           <h2 className="font-serif italic text-xl truncate">{title}</h2>
           {subtitle ? <p className="text-xs text-cream/70 truncate">{subtitle}</p> : null}

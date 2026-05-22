@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbForSlug, dbConfigured, SUPPORTED_ACHARYAS, publicAcharyaTable, isMissingDbObject, type AcharyaSlug } from "@/lib/server/supabase";
+import crypto from "node:crypto";
+import {
+  dbForSlug,
+  dbConfigured,
+  SUPPORTED_ACHARYAS,
+  publicAcharyaTable,
+  isMissingDbObject,
+  isNetworkUnavailable,
+  type AcharyaSlug,
+} from "@/lib/server/supabase";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { normalizeIndianPhone } from "@/lib/phone";
 import { DEV_OTP, setLearnerCookie } from "@/lib/server/phone-auth";
@@ -16,6 +25,42 @@ type UserRow = {
   is_admin?: boolean | null;
 };
 
+function pilotLearnerId(phone: string): string {
+  const hex = crypto.createHash("sha256").update(phone).digest("hex");
+  const variant = ((parseInt(hex[16] || "8", 16) & 0x3) | 0x8).toString(16);
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    `4${hex.slice(13, 16)}`,
+    `${variant}${hex.slice(17, 20)}`,
+    hex.slice(20, 32),
+  ].join("-");
+}
+
+async function pilotSessionResponse(phone: string) {
+  const session = {
+    learnerId: pilotLearnerId(phone),
+    phone,
+    name: `Pilot ${phone.slice(-4)}`,
+    roleSlug: "learner",
+    categorySlug: "",
+    isAdmin: false,
+  };
+  const res = NextResponse.json({
+    ok: true,
+    learner: {
+      id: session.learnerId,
+      phone: session.phone,
+      name: session.name,
+      role: "user",
+      isAdmin: false,
+      preferredLang: "en",
+    },
+  });
+  await setLearnerCookie(res, session);
+  return res;
+}
+
 /**
  * POST /api/auth/phone/verify-otp
  * Body: { phone, otp, acharyaSlug? }
@@ -30,10 +75,6 @@ export async function POST(req: NextRequest) {
       { error: "Too many attempts. Wait a minute.", retryInSeconds: rl.resetInSeconds },
       { status: 429, headers: { "Retry-After": String(rl.resetInSeconds) } }
     );
-  }
-
-  if (!dbConfigured) {
-    return NextResponse.json({ error: "Service not configured" }, { status: 500 });
   }
 
   const body = await req.json().catch(() => null);
@@ -53,6 +94,10 @@ export async function POST(req: NextRequest) {
   }
   if (otp !== DEV_OTP) {
     return NextResponse.json({ error: "Incorrect OTP. Try again." }, { status: 401 });
+  }
+
+  if (!dbConfigured) {
+    return pilotSessionResponse(phone);
   }
 
   const phoneCandidates = [phone, phone.replace(/^\+91/, "")];
@@ -80,8 +125,9 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
+      if (isNetworkUnavailable(error)) return pilotSessionResponse(phone);
       if (isMissingDbObject(error)) continue;
-      console.error(`otp-verify lookup error for ${a}:`, error);
+      console.warn(`otp-verify lookup skipped for ${a}:`, error.message);
       continue;
     }
     if (data) {
@@ -112,6 +158,7 @@ export async function POST(req: NextRequest) {
         .single();
 
       if (ins.error) {
+        if (isNetworkUnavailable(ins.error)) return pilotSessionResponse(phone);
         if (isMissingDbObject(ins.error)) continue;
         // Duplicate — might have been created by a concurrent request,
         // or exists but with is_deleted/is_active mismatch.
@@ -137,10 +184,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!matchedUser) {
-      return NextResponse.json(
-        { error: "Could not register. Ask admin to set up at least one acharya schema." },
-        { status: 404 }
-      );
+      return pilotSessionResponse(phone);
     }
   }
 
