@@ -232,6 +232,50 @@ function normalizeApplyResult(value: ApplyResult | null, fallback: ApplyResult):
   };
 }
 
+function parseApplyResult(reply: string): ApplyResult | null {
+  const cleaned = reply
+    .replace(/```(?:json)?/gi, '')
+    .replace(/```/g, '')
+    .trim();
+
+  const candidates = [
+    cleaned,
+    cleaned.match(/\{[\s\S]*\}/)?.[0] || '',
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate) as ApplyResult;
+    } catch {
+      // Try the next candidate.
+    }
+  }
+
+  return null;
+}
+
+function latestUserPhoto(turns: Turn[]): string | undefined {
+  return [...turns].reverse().find((t) => t.role === 'user' && t.photo)?.photo;
+}
+
+function evaluationLabel(lang: keyof typeof prompts, speakerName: string) {
+  if (lang === 'bn') return `${speakerName}র মূল্যায়ন`;
+  if (lang === 'hi') return `${speakerName} का मूल्यांकन`;
+  return `${speakerName}'s Evaluation`;
+}
+
+function finishNote(lang: keyof typeof prompts, speakerName: string) {
+  if (lang === 'bn') return `যখন সব বলা হয়ে যাবে, "সম্পূর্ণ জমা দাও" চাপো — ${speakerName} স্কোর দেবে।`;
+  if (lang === 'hi') return `जब सब बता दो, "पूरी प्रगति जमा करो" दबाओ — ${speakerName} स्कोर देगा।`;
+  return `When you've said everything, tap "Submit progress" — ${speakerName} will give a score.`;
+}
+
+function emptyReportHint(lang: keyof typeof prompts, speakerName: string) {
+  if (lang === 'bn') return 'তোমার আজকের কাজের কথা বলো — ছবি, ভয়েস বা টেক্সটে।';
+  if (lang === 'hi') return 'आज के काम के बारे में बताओ — फ़ोटो, आवाज़ या टेक्स्ट में।';
+  return `Tell ${speakerName} what you did today — photo, voice, or text.`;
+}
+
 export default function ApplyPage() {
   const { lang, selectedModuleId, modules, voiceEnabled } = useStore();
 
@@ -490,11 +534,13 @@ Latest user turn: "${sentText || '(submitted a photo — give a one-sentence obs
     }
 
     const moduleLine = currentModule ? `${selectedModuleId} (${getTitle(currentModule, lang)})` : selectedModuleId;
+    const finalPhoto = latestUserPhoto(history);
     const finalPrompt = `FIELD APPLICATION FINAL EVALUATION.
 
 The learner has reported their field work for module ${moduleLine} across the conversation above. They have just tapped "Submit progress" to finalise. Evaluate the WHOLE conversation.
+${finalPhoto ? '\nA photo is attached to this final evaluation request. Inspect the image directly and use only what is visibly present in it. If it appears to be a screenshot, UI, random image, or unrelated evidence, say that clearly and score accordingly.' : ''}
 
-Respond ONLY in this JSON format, no other text:
+Respond ONLY as raw valid JSON. No markdown, no code fence, no prose before or after the JSON:
 {
   "summary": "one-line summary of what they did",
   "score": <number 1-10>,
@@ -514,21 +560,20 @@ Write all four fields in the learner's language.`;
         history: composePromptHistory().slice(-20),
         moduleId: selectedModuleId,
         lang,
+        image: finalPhoto,
       });
 
-      let parsed: ApplyResult | null = null;
-      try {
-        const m = reply.match(/\{[\s\S]*\}/);
-        parsed = m ? JSON.parse(m[0]) : null;
-      } catch {
-        parsed = null;
-      }
+      let parsed = parseApplyResult(reply);
 
       if (!parsed) {
         parsed = {
           summary: history.find((t) => t.role === 'user')?.content.slice(0, 80) || '(report)',
           score: 2,
-          feedback: reply,
+          feedback: lang === 'bn'
+            ? 'মূল্যায়নের উত্তর ঠিকমতো পড়া যায়নি, তাই নিরাপদ কম স্কোর দেওয়া হয়েছে। আবার জমা দিলে ছবি ও রিপোর্ট নতুন করে দেখা হবে।'
+            : lang === 'hi'
+            ? 'मूल्यांकन का उत्तर ठीक से पढ़ा नहीं जा सका, इसलिए सुरक्षित कम स्कोर दिया गया है। दोबारा जमा करने पर फ़ोटो और रिपोर्ट फिर से देखी जाएगी।'
+            : 'The evaluation response could not be read cleanly, so a safe low score was assigned. Submit again to re-check the photo and report.',
           nextStep: lang === 'bn' ? 'কাল আরেকটু বিস্তারিত বলো।' : lang === 'hi' ? 'कल और विस्तार से बताओ।' : 'Add more detail tomorrow.',
         };
       }
@@ -683,7 +728,7 @@ Write all four fields in the learner's language.`;
           </Card>
 
           <Card tone="surface" padding="lg">
-            <Tag tone="forest">{p.feedback}</Tag>
+            <Tag tone="forest">{evaluationLabel(lang, speakerName)}</Tag>
             <p className="font-serif text-[14.5px] text-ink mt-2 leading-[1.65]">{result.feedback}</p>
           </Card>
 
@@ -727,7 +772,7 @@ Write all four fields in the learner's language.`;
             ? 'তোমার আজকের কাজের কথা বলো — ছবি, ভয়েস বা টেক্সটে।'
             : lang === 'hi'
             ? 'आज के काम के बारे में बताओ — फ़ोटो, आवाज़ या टेक्स्ट में।'
-            : 'Tell Arjun what you did today — photo, voice, or text.'}
+            : emptyReportHint(lang, speakerName)}
         </p>
         <p className="text-[11px] text-muted mt-3 max-w-xs italic">
           {lang === 'bn'
@@ -815,7 +860,7 @@ Write all four fields in the learner's language.`;
       {/* Pinned footer — either busy bar (thinking/speaking) OR the composer */}
       <div className="shrink-0 border-t border-line pt-3 pb-3">
         {composerHidden ? (
-          // Compact status bar while Arjun is thinking/speaking. Composer hides.
+          // Compact status bar while the coach is thinking/speaking. Composer hides.
           <div className="flex items-center justify-between gap-3 px-2 py-2 rounded-full bg-cream border border-line">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-2 h-2 rounded-full bg-forest animate-pulse" />
@@ -867,7 +912,7 @@ Write all four fields in the learner's language.`;
 
             {/* Helper hint */}
             {state === 'conversation' && history.length >= 2 && (
-              <p className="text-[11px] text-muted text-center mb-2 italic">{p.finishNote}</p>
+              <p className="text-[11px] text-muted text-center mb-2 italic">{finishNote(lang, speakerName)}</p>
             )}
 
             {/* Action row */}
